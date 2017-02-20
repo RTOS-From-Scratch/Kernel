@@ -72,13 +72,15 @@ endif( NOT EXISTS ${PROJ_PATH}/tm4c123gh6pm.h )
 #################################################################
 
 ######################## My Sources files #######################
+						### Nano Kernel ###
+SET( NANO_KERNEL_PATH ${CMAKE_SOURCE_DIR}/nanokernel )
 # TODO: better way to find files types
-FILE(GLOB ${PROJECT_NAME}_CSources ${CMAKE_SOURCE_DIR}/*.c)
-FILE(GLOB ${PROJECT_NAME}_CppSources ${CMAKE_SOURCE_DIR}/*.cpp)
-FILE(GLOB ${PROJECT_NAME}_ASMSources ${CMAKE_SOURCE_DIR}/*.s ${CMAKE_SOURCE_DIR}/*.S)
-FILE(GLOB ${PROJECT_NAME}_Headers ${CMAKE_SOURCE_DIR}/*.h)
+FILE(GLOB ${PROJECT_NAME}_CSources ${NANO_KERNEL_PATH}/*.c)
+FILE(GLOB ${PROJECT_NAME}_CppSources ${NANO_KERNEL_PATH}/*.cpp)
+FILE(GLOB ${PROJECT_NAME}_ASMSources ${NANO_KERNEL_PATH}/*.s ${NANO_KERNEL_PATH}/*.S)
+FILE(GLOB ${PROJECT_NAME}_Headers ${NANO_KERNEL_PATH}/*.h)
 SET ( Other_${PROJECT_NAME}_Sources ${PROJ_PATH}/startup.c ${PROJ_PATH}/tm4c123gh6pm.h )
-SET (${PROJECT_NAME}_Sources ${${PROJECT_NAME}_CSources} ${${PROJECT_NAME}_CppSources} ${${PROJECT_NAME}_ASMSources} ${${PROJECT_NAME}_Headers} ${Other_${PROJECT_NAME}_Sources})
+SET (${PROJECT_NAME}_Sources ${${PROJECT_NAME}_CSources} ${${PROJECT_NAME}_CppSources} ${${PROJECT_NAME}_ASMSources} ${${PROJECT_NAME}_Headers} ${Other_${PROJECT_NAME}_Sources} ${CMAKE_SOURCE_DIR}/main.c)
 # FILE(GLOB ${PROJECT_NAME}_Sources ${CMAKE_SOURCE_DIR}/*)
 # SET (${PROJECT_NAME}_Sources ${${PROJECT_NAME}_Sources} ${Other_${PROJECT_NAME}_Sources})
 #################################################################
