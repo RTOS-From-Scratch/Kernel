@@ -1,27 +1,27 @@
 #/*
 # * Description : CMake is an open-source, cross-platform family of tools
 # *               designed to build, test and package software.
-# * Usage	    : CMake is used to control the software compilation process
+# * Usage       : CMake is used to control the software compilation process
 # *               using simple platform and compiler independent 
 # *               configuration files, and generate native makefiles
 # *               and workspaces that can be used in the compiler environment
 # *               of your choice.
-# * Author	    : Baron Leonardo <mohamedayman.fcis@zoho.com>
-# * License	    : Copyright (C) 2016 RTOS From Scratch
+# * Author      : Baron Leonardo <mohamedayman.fcis@zoho.com>
+# * License     : Copyright (C) 2016 RTOS From Scratch
 # *
 # *
-# *	This program is free software: you can redistribute it and/or modify
-# *	it under the terms of the GNU General Public License as published by
-# *	the Free Software Foundation, either version 3 of the License, or
-# *	(at your option) any later version.
+# * This program is free software: you can redistribute it and/or modify
+# * it under the terms of the GNU General Public License as published by
+# * the Free Software Foundation, either version 3 of the License, or
+# * (at your option) any later version.
 # *
-# *	This program is distributed in the hope that it will be useful,
-# *	but WITHOUT ANY WARRANTY; without even the implied warranty of
-# *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# *	GNU General Public License for more details.
+# * This program is distributed in the hope that it will be useful,
+# * but WITHOUT ANY WARRANTY; without even the implied warranty of
+# * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# * GNU General Public License for more details.
 # *
-# *	You should have received a copy of the GNU General Public License
-# *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# * You should have received a copy of the GNU General Public License
+# * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 # */
 
 cmake_minimum_required(VERSION 3.2)
@@ -54,16 +54,18 @@ SET(CMAKE_CXX_COMPILER ${ARM_TOOLCHAIN_BIN_PATH}/arm-none-eabi-g++ CACHE STRING 
 SET(CMAKE_ASM_COMPILER ${ARM_TOOLCHAIN_BIN_PATH}/arm-none-eabi-as CACHE STRING "ASM" FORCE)
 #################################################################
 
-################# check important files existance################
-# check `tm4c123gh6pm.lds` existance
-if( NOT EXISTS ${PROJ_PATH}/tm4c123gh6pm.lds)
-	MESSAGE(FATAL_ERROR "Can't find `tm4c123gh6pm.lds` linker file in ${PROJ_PATH}.")
-endif(NOT EXISTS ${PROJ_PATH}/tm4c123gh6pm.lds)
+################# check important files existance ################
+if(RFS_TESTING)
+	# check `tm4c123gh6pm.lds` existance
+	if( NOT EXISTS ${PROJ_PATH}/tm4c123gh6pm.lds)
+		MESSAGE(FATAL_ERROR "Can't find `tm4c123gh6pm.lds` linker file in ${PROJ_PATH}.")
+	endif(NOT EXISTS ${PROJ_PATH}/tm4c123gh6pm.lds)
 
-# check `startup.c` existance
-if( NOT EXISTS ${PROJ_PATH}/startup.c )
-	MESSAGE(FATAL_ERROR "Can't find `startup.c` file in ${PROJ_PATH}.")
-endif( NOT EXISTS ${PROJ_PATH}/startup.c )
+	# check `startup.c` existance
+	if( NOT EXISTS ${PROJ_PATH}/startup.c )
+		MESSAGE(FATAL_ERROR "Can't find `startup.c` file in ${PROJ_PATH}.")
+	endif( NOT EXISTS ${PROJ_PATH}/startup.c )
+endif(RFS_TESTING)
 
 # check `tm4c123gh6pm.h` existance
 if( NOT EXISTS ${PROJ_PATH}/tm4c123gh6pm.h )
@@ -71,18 +73,39 @@ if( NOT EXISTS ${PROJ_PATH}/tm4c123gh6pm.h )
 endif( NOT EXISTS ${PROJ_PATH}/tm4c123gh6pm.h )
 #################################################################
 
+############################# Network ############################
+# connect other parts to this part from RFS
+if(RFS_TESTING)
+    SET(${PROJECT_NAME}_NetworkSources ${PROJ_PATH}/../Data\ Structures/src/linkedlist.c )
+endif(RFS_TESTING)
+##################################################################
+
 ######################## My Sources files #######################
-						### Nano Kernel ###
-SET( NANO_KERNEL_PATH ${CMAKE_SOURCE_DIR}/nanokernel )
-# TODO: better way to find files types
-FILE(GLOB ${PROJECT_NAME}_CSources ${NANO_KERNEL_PATH}/*.c)
-FILE(GLOB ${PROJECT_NAME}_CppSources ${NANO_KERNEL_PATH}/*.cpp)
-FILE(GLOB ${PROJECT_NAME}_ASMSources ${NANO_KERNEL_PATH}/*.s ${NANO_KERNEL_PATH}/*.S)
-FILE(GLOB ${PROJECT_NAME}_Headers ${NANO_KERNEL_PATH}/*.h)
-SET ( Other_${PROJECT_NAME}_Sources ${PROJ_PATH}/startup.c ${PROJ_PATH}/tm4c123gh6pm.h )
-SET (${PROJECT_NAME}_Sources ${${PROJECT_NAME}_CSources} ${${PROJECT_NAME}_CppSources} ${${PROJECT_NAME}_ASMSources} ${${PROJECT_NAME}_Headers} ${Other_${PROJECT_NAME}_Sources} ${CMAKE_SOURCE_DIR}/main.c)
-# FILE(GLOB ${PROJECT_NAME}_Sources ${CMAKE_SOURCE_DIR}/*)
-# SET (${PROJECT_NAME}_Sources ${${PROJECT_NAME}_Sources} ${Other_${PROJECT_NAME}_Sources})
+# `lib` path
+SET( CMAKE_LIBRARY_PATH ${PROJ_PATH}/lib )
+# `C` sources path
+FILE(GLOB_RECURSE ${PROJECT_NAME}_CSources ${CMAKE_SOURCE_DIR}/*.c)
+# `CPP` sources path
+FILE(GLOB_RECURSE ${PROJECT_NAME}_CppSources ${CMAKE_SOURCE_DIR}/*.cpp)
+# `ASM` sources path
+FILE(GLOB_RECURSE ${PROJECT_NAME}_ASMSources ${CMAKE_SOURCE_DIR}/*.s ${CMAKE_SOURCE_DIR}/*.S)
+# `h` headers path
+FILE(GLOB_RECURSE ${PROJECT_NAME}_Headers ${CMAKE_SOURCE_DIR}/*.h ${CMAKE_LIBRARY_PATH}/*.h)
+# other sources
+SET ( Other_${PROJECT_NAME}_Sources ${PROJ_PATH}/tm4c123gh6pm.h )
+# if in testing mode, add `main.c` and `startup.c`
+if(RFS_TESTING)
+	SET( ${PROJECT_NAME}_main ${PROJ_PATH}/main.c )
+	SET( Other_${PROJECT_NAME}_Sources ${Other_${PROJECT_NAME}_Sources} ${PROJ_PATH}/startup.c )
+	FILE(GLOB_RECURSE ${PROJECT_NAME}_LIBS ${CMAKE_LIBRARY_PATH}/*.a )
+endif(RFS_TESTING)
+SET (${PROJECT_NAME}_Sources ${${PROJECT_NAME}_CSources}
+                             ${${PROJECT_NAME}_CppSources}
+                             ${${PROJECT_NAME}_ASMSources}
+                             ${${PROJECT_NAME}_Headers}
+                             ${Other_${PROJECT_NAME}_Sources}
+                             ${${PROJECT_NAME}_NetworkSources}
+                             ${${PROJECT_NAME}_main})
 #################################################################
 
 ################## Compiler and linker configs ##################
@@ -95,26 +118,43 @@ set(CMAKE_EXE_LINKER_FLAGS "-Wl,-Map,'${PROJECT_NAME}.map' -Wl,-T'${PROJ_PATH}/t
 
 ######################## Project configs ########################
 project(${PROJECT_NAME} C CXX)
+# treat `assembly` files as `C` files
 set_property(SOURCE ${${PROJECT_NAME}_ASMSources} PROPERTY LANGUAGE C)
 
 # include tm4c123gh6pm.h startup.c files
 include_directories(${PROJ_PATH})
 
-add_executable(${PROJECT_NAME}.elf ${${PROJECT_NAME}_Sources})
+if(RFS_TESTING)
+	add_executable(${PROJECT_NAME}.elf ${${PROJECT_NAME}_Sources})
+	# link the output with the libraries in `lib` folder
+	target_link_libraries(${PROJECT_NAME}.elf ${${PROJECT_NAME}_LIBS})
 
-# add custom command for converting .elf to .hex
-# .hex file is the one which for uploading
-# .elf file is the one which used for debugging
-add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD COMMAND ${ARM_TOOLCHAIN_BIN_PATH}/arm-none-eabi-objcopy ARGS -O binary ${PROJECT_NAME}.elf ${PROJECT_NAME}.hex)
-add_custom_target(upload lm4flash ${PROJECT_NAME}.hex DEPENDS ${PROJECT_NAME}.elf )
+	# add custom command for converting .elf to .hex
+	# .hex file is the one which for uploading
+	# .elf file is the one which used for debugging
+	add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD COMMAND ${ARM_TOOLCHAIN_BIN_PATH}/arm-none-eabi-objcopy ARGS -O binary ${PROJECT_NAME}.elf ${PROJECT_NAME}.hex)
+	add_custom_target(upload lm4flash ${PROJECT_NAME}.hex DEPENDS ${PROJECT_NAME}.elf COMMENT "Uploading ...")
+# else, this build without linking
+else(RFS_TESTING)
+	add_library(${PROJECT_NAME} OBJECT ${${PROJECT_NAME}_Sources})
+endif(RFS_TESTING)
+#################################################################
 
+######################### CMake options #########################
 # option for build and then upload
-SET(BUILD_AND_UPLOAD False CACHE BOOL "Build then upload")
-
-if(BUILD_AND_UPLOAD)
+SET(RFS_BUILD_AND_UPLOAD False CACHE BOOL "Build then upload")
+if(RFS_BUILD_AND_UPLOAD)
     message(STATUS "Uploading...")
     add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD COMMAND lm4flash ARGS ${PROJECT_NAME}.hex)
-endif(BUILD_AND_UPLOAD)
+endif(RFS_BUILD_AND_UPLOAD)
+
+# option for `testing parts of RFS`
+SET(RFS_TESTING False CACHE BOOL "Turn on RFS testing - include main.c")
+if(RFS_TESTING)
+	message(STATUS "-------------------------")
+    message(STATUS "| RFS Testing is ON ... |")
+    message(STATUS "-------------------------")
+endif(RFS_TESTING)
 #################################################################
 
 ######################### clear config ##########################
