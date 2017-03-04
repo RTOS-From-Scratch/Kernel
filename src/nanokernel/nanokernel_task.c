@@ -27,6 +27,20 @@ void nanokernel_Task_loadStack( int32_t* curr_stack_ptr );
 //        );
 //}
 
+void nanokernel_init( nanokernel_Task* task )
+{
+    nanokernel_currTask = task;
+    nanokernel_nextTask = task;
+
+    // TODO: save old stack first and load the new one
+    //    nanokernel_Task_loadStack(task->stack_ptr);
+
+    nanokernel_Task_enablePSP();
+    NVIC_INT_CTRL_R |= NVIC_INT_CTRL_PEND_SV;
+
+    task->run();
+}
+
 void nanokernel_Task_initStack( nanokernel_Task* task )
 {
     // The stack intialized by this way for debugging purpose
@@ -68,16 +82,6 @@ nanokernel_Task* nanokernel_Task_create(uint32_t stack_size, void (*run)())
     nanokernel_Task_initStack( task );
 
     return task;
-}
-
-void nanokernel_Task_activate( nanokernel_Task* task )
-{
-    nanokernel_currTask = task;
-
-    // TODO: save old stack first and load the new one
-    nanokernel_Task_loadStack(task->stack_ptr);
-
-    task->run();
 }
 
 void nanokernel_Task_terminate( nanokernel_Task *task )

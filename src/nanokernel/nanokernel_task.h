@@ -17,12 +17,10 @@ struct nanokernel_Task {
     int32_t stack[];
 };
 
-extern nanokernel_Task* nanokernel_currTask;
-
 // functions
+void nanokernel_init( nanokernel_Task* task );
 void nanokernel_Task_initStack( nanokernel_Task* task );
 nanokernel_Task* nanokernel_Task_create(uint32_t stack_size, void (*run)());
-void nanokernel_Task_activate( nanokernel_Task* task );
 void nanokernel_Task_terminate( nanokernel_Task *task );
 
 #endif // NANOKERNEL_TASK_H_
