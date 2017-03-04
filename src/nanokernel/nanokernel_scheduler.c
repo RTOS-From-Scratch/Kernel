@@ -2,6 +2,9 @@
 #include "nanokernel_task.h"
 #include "nanokernel.h"
 
+extern nanokernel_Task* nanokernel_currTask;
+
+
 void nanokernel_scheduler()
 {
     // Round robin scheduler
