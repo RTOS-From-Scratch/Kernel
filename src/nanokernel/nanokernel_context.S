@@ -5,6 +5,7 @@
 .global nanokernel_Task_context
 .global nanokernel_Task_loadStack
 .global SysTickHandler
+.global nanokernel_Task_enablePSP
 .extern nanokernel_scheduler
 
 
@@ -51,6 +52,19 @@ nanokernel_Task_loadStack:
 	pop		{R0}
 
 	BX		LR
+
+
+nanokernel_Task_enablePSP:
+    push	{R0}						@ -- load MSP into PSP
+    MRS		R0, MSP
+    MSR		PSP, R0
+    MOV		R0, 0x2						@ -- Use PSP for user task
+    MSR		CONTROL, R0
+    ISB
+    pop		{R0}
+
+    BX		LR
+
 
 .ALIGN
 .END

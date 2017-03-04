@@ -2,9 +2,11 @@
 #include <stdlib.h>
 
 nanokernel_Task* nanokernel_currTask = NULL;
+nanokernel_Task* nanokernel_nextTask = NULL;
 uint32_t id = 0;
 
 void nanokernel_Task_loadStack( int32_t* curr_stack_ptr );
+extern void nanokernel_Task_enablePSP();
 
 /* By default GNU ARM compiler will store and restore a Frame Pointer
  * using "r7" and do stack alignment when entering into and exiting functions.
