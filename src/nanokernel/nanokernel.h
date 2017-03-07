@@ -3,15 +3,7 @@
 
 #include "tm4c123gh6pm.h"
 #include <stdint.h>
-
-#ifdef __GNUC__
-    #define ASM __asm__ __volatile__
-    #define __NAKED __attribute__((naked))
-    #define __NAKED_ISR __attribute__((naked, isr))
-    #define NOP ASM("NOP")
-#else
-    #error "You should use `arm-none-eabi` toolchain"
-#endif // __GNUC__
+#include "inner/inner_nanokernel.h"
 
 typedef enum priority_t {
     priority_0, // highest priority
@@ -23,5 +15,12 @@ typedef enum priority_t {
     priority_6,
     priority_7, // lowest priority
 } priority_t;
+
+void nanokernel_init();
+// boot up the system ( using the nano kernel )
+// it will never return
+void nanokernel_bootup();
+
+#include "nanokernel_task.h"
 
 #endif // NANO_KERNEL_H_
