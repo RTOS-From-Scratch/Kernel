@@ -28,6 +28,7 @@ void __nanokernel_SchedulerPreemptive_run()
         // freshly booted
         if( curr_task == NULL )
         {
+            // TODO: no tasks in the queue
             curr_task = __nanokernel_SchedulerPreemptive_getNextTask();
             // context switch
             // TODO: MSP - PSP
