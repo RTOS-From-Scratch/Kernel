@@ -2,8 +2,8 @@
 #define NANOKERNEL_H_
 
 #include "tm4c123gh6pm.h"
-#include <stdint.h>
 #include "inner/inner_nanokernel.h"
+#include "inner/inner_nanokernel_task.h"
 
 typedef enum priority_t {
     priority_0, // highest priority
