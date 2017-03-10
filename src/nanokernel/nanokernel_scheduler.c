@@ -3,6 +3,7 @@
 #include "nanokernel.h"
 #include "inner/inner_nanokernel.h"
 #include "../../../DataStructures/src/inverted_priority_queue.h"
+#include "nanokernel_task_idle.h"
 
 #define CONTEXT_SWITCH      NVIC_INT_CTRL_R |= NVIC_INT_CTRL_PEND_SV
 
@@ -29,6 +30,9 @@ void __nanokernel_SchedulerPreemptive_run()
         // freshly booted
         if( curr_task == NULL )
         {
+            // if there is no other tasks
+            if( IPQueue_isEmpty(ready_processes) )
+                nanokernel_Task_idle();
             // TODO: no tasks in the queue
             curr_task = __nanokernel_SchedulerPreemptive_getNextTask();
             // context switch
