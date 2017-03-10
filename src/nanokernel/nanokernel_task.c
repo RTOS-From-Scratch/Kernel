@@ -53,7 +53,7 @@ void __nanokernel_Task_initStack( nanokernel_Task_t* task )
     *(task->stack_ptr = task->stack_start - 16) = 0x04040404;    // R4
 }
 
-nanokernel_Task_t* nanokernel_Task_create(uint32_t stack_size, int8_t priority, void (*run)())
+nanokernel_Task_t* nanokernel_Task_create(uint32_t stack_size, Priority_t priority, void (*run)())
 {
     nanokernel_Task_t *task = malloc(sizeof(nanokernel_Task_t) + stack_size);
 
