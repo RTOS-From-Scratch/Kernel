@@ -2,11 +2,12 @@
 #include "nanokernel_task.h"
 #include "nanokernel.h"
 #include "inner/inner_nanokernel.h"
+#include "../../../DataStructures/src/inverted_priority_queue.h"
 
 #define CONTEXT_SWITCH      NVIC_INT_CTRL_R |= NVIC_INT_CTRL_PEND_SV
 
 // TODO: make sure that these functions will not re-called
-static PQueue *ready_processes;
+static IPQueue *ready_processes;
 static nanokernel_Task_t* curr_task;
 
 void __nanokernel_SchedulerPreemptive_init(int8_t max_processes_num)
@@ -14,7 +15,7 @@ void __nanokernel_SchedulerPreemptive_init(int8_t max_processes_num)
     // TODO: This need to be called once
 //    scheduler = malloc(sizeof(__nanokernel_SchedulerPreemptive_t));
     curr_task = NULL;
-    ready_processes = PQueue_new(max_processes_num);
+    ready_processes = IPQueue_new(max_processes_num);
 }
 
 void __nanokernel_SchedulerPreemptive_run()
@@ -36,10 +37,10 @@ void __nanokernel_SchedulerPreemptive_run()
         }
 
         // task which has lower priority value means that it has higher priority
-        else if( curr_task->priority > PQueue_getHeadPriority(ready_processes) )
+        else if( curr_task->priority > IPQueue_getHeadPriority(ready_processes) )
         {
             // save the current task
-            PQueue_push(ready_processes, curr_task->priority, curr_task);
+            IPQueue_push(ready_processes, curr_task->priority, curr_task);
             // get highest priority task
             curr_task = __nanokernel_SchedulerPreemptive_getNextTask();
             // context switch
@@ -52,7 +53,7 @@ void __nanokernel_SchedulerPreemptive_run()
 void __nanokernel_SchedulerPreemptive_addTask(nanokernel_Task_t* task)
 {
     // TODO: critical section
-    PQueue_push(ready_processes, task->priority, task );
+    IPQueue_push(ready_processes, task->priority, task );
 
     // FIXME: you can't just return if not initiated !!
     if( __nanokernel_getState() <= __NOT_BOOTED ) return;
@@ -63,7 +64,7 @@ void __nanokernel_SchedulerPreemptive_addTask(nanokernel_Task_t* task)
 
 nanokernel_Task_t* __nanokernel_SchedulerPreemptive_getNextTask()
 {
-    return PQueue_getHeadData(ready_processes);
+    return IPQueue_popHead(ready_processes);
 }
 
 nanokernel_Task_t *__nanokernel_getCurrentTask()
@@ -84,5 +85,5 @@ void __nanokernel_SchedulerPreemptive_endCurrentTask()
 
 void __nanokernel_SchedulerPreemptive_clean()
 {
-    PQueue_clean(ready_processes);
+    IPQueue_clean(ready_processes);
 }

@@ -1,7 +1,6 @@
 #ifndef NANOKERNEL_SCHEDULER_H_
 #define NANOKERNEL_SCHEDULER_H_
 
-#include "../../../Data Structures/src/priority_queue.h"
 #include "nanokernel_task.h"
 
 void nanokernel_scheduler();
