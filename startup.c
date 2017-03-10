@@ -36,7 +36,6 @@ static uint32_t pui32Stack[128];
 //
 //*****************************************************************************
 // To be added by user
-extern void SysTickHandler(void);
 extern void PendSVHandler(void);
 
 //*****************************************************************************
@@ -65,7 +64,7 @@ void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // Debug monitor handler
     0,                                      // Reserved
     PendSVHandler,                          // The PendSV handler
-    SysTickHandler,                      	// The SysTick handler
+    IntDefaultHandler,                      // The SysTick handler
     IntDefaultHandler,                      // GPIO Port A
     IntDefaultHandler,                      // GPIO Port B
     IntDefaultHandler,                      // GPIO Port C

@@ -4,7 +4,6 @@
 .syntax unified                            @ Force thumb syntax - `https://sourceware.org/binutils/docs/as/ARM_002dInstruction_002dSet.html#ARM_002dInstruction_002dSet`
 .global nanokernel_Task_context
 .global nanokernel_Task_loadStack
-.global SysTickHandler
 .global PendSVHandler
 .global nanokernel_enablePSP
 .global nanokernel_enableMSP
@@ -85,9 +84,9 @@ PendSVHandler:
 
             /******************************************************/
 
-.thumb_func                                 @ -- Thumb encoded function
+/*.thumb_func                                 @ -- Thumb encoded function
 SysTickHandler:                             @ 1) Saves R0-R3,R12,LR,PC,PSR
-/*    CPSID   I                               @ 2) Prevent interrupt during switch
+    CPSID   I                               @ 2) Prevent interrupt during switch
 
     BL nanokernel_updateMSP
 
@@ -104,8 +103,8 @@ SysTickHandler:                             @ 1) Saves R0-R3,R12,LR,PC,PSR
 
     BL nanokernel_updatePSP               @ in exception mode MSP is used
 
-    CPSIE   I                               @ 9) tasks run with interrupts enabled*/
-    BX      LR                              @ 10) restore R0-R3,R12,LR,PC,PSR
+    CPSIE   I                               @ 9) tasks run with interrupts enabled
+    BX      LR                              @ 10) restore R0-R3,R12,LR,PC,PSR*/
 /**************************************************************************/
 
 .ALIGN
