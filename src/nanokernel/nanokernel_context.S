@@ -71,9 +71,11 @@ PendSVHandler:
     PUSH    {R4-R11}                        @ 3) Save remaining regs r4-11
 
     @ TODO: use OS stack
+    push {LR}
     BL  __nanokernel_getCurrentTask         @ -- get next task in R0
-    LDR     R1, [R0]                        @ -- load the the new task
-    LDR     SP, [R1]
+    pop  {LR}
+/*    LDR     R1, [R0]                        @ -- load the the new task*/
+    LDR     SP, [R0]
 
     POP     {R4-R11}                        @ 8) restore regs r4-11
 
