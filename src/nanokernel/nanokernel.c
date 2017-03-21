@@ -15,6 +15,7 @@ void nanokernel_init()
     //    nanokernel_Task_loadStack(task->stack_ptr);
 
     // TODO: better way ?
+    __nanokernel_Scheduler_Preemptive_init(MAX_PROCESSES_NUM);
     // initiate the vector table
     __nanokernel_ISR_vectorTable_init();
     // put __nanokernel_Task_contextSwitch in vector table
