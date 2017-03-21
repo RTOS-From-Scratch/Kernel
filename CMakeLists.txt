@@ -79,7 +79,8 @@ if(RFS_TESTING)
     SET(${PROJECT_NAME}_NetworkSources ${PROJ_PATH}/../DataStructures/src/inverted_priority_queue.c
                                        ${PROJ_PATH}/../DataStructures/src/priority_queue.c
                                        ${PROJ_PATH}/../DataStructures/src/inner/inner_priority_queue.c
-                                       ${PROJ_PATH}/../Drivers/src/UART.c)
+                                       ${PROJ_PATH}/../Drivers/src/UART.c
+                                       ${PROJ_PATH}/../Drivers/src/GPIO.c)
 endif(RFS_TESTING)
 ##################################################################
 

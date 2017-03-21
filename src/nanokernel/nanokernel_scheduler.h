@@ -13,5 +13,6 @@ void __nanokernel_Scheduler_Preemptive_run();
 void __nanokernel_Scheduler_Preemptive_endCurrentTask();
 nanokernel_Task_t* __nanokernel_getCurrentTask();
 void __nanokernel_SchedulerPreemptive_clean();
+void __nanokernel_Scheduler_Preemptive_clean();
 
 #endif // NANOKERNEL_SCHEDULER_H_

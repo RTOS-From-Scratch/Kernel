@@ -33,5 +33,5 @@ void nanokernel_bootup()
     __nanokernel_setState(__BOOTED);
 
     // run the scheduler
-    __nanokernel_SchedulerPreemptive_run();
+    __nanokernel_Scheduler_Preemptive_run();
 }

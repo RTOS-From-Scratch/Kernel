@@ -5,13 +5,14 @@
 #include "../../../DataStructures/src/inverted_priority_queue.h"
 #include "nanokernel_task_idle.h"
 
+// PS -> Preemptive Scheduler
 #define CONTEXT_SWITCH      NVIC_INT_CTRL_R |= NVIC_INT_CTRL_PEND_SV
 
 // TODO: make sure that these functions will not re-called
 static IPQueue *ready_processes;
 static nanokernel_Task_t* curr_task;
 
-void __nanokernel_SchedulerPreemptive_init(int8_t max_processes_num)
+void __nanokernel_Scheduler_Preemptive_init(int8_t max_processes_num)
 {
     // TODO: This need to be called once
 //    scheduler = malloc(sizeof(__nanokernel_Scheduler_Preemptive_t));
