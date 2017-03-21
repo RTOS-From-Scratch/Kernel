@@ -21,7 +21,7 @@ nanokernel_Task_loadStack:
 
 /************************* Process Stack Pointer *************************/
 nanokernel_enablePSP:
-    push    {R0-R1}                         @ -- load MSP into PSP
+/*    push    {R0-R1}                         @ -- load MSP into PSP*/
     MRS     R0, MSP
     MSR     PSP, R0
     MOV     R0, 0x2                         @ -- Use PSP for user task
@@ -29,20 +29,13 @@ nanokernel_enablePSP:
     ORR     R1, R0
     MSR     CONTROL, R1
     ISB
-    pop     {R0-R1}
-    BX      LR
-
-nanokernel_updatePSP:
-    push    {R0}
-    MRS     R0, MSP
-    MSR     PSP, R0
-    pop     {R0}
+/*    pop     {R0-R1}*/
     BX      LR
 /*************************************************************************/
 
 /*************************** Main Stack Pointer ***************************/
 nanokernel_enableMSP:
-    push    {R0-R1}                         @ -- load PSP into MSP
+/*    push    {R0-R1}                         @ -- load PSP into MSP*/
     MRS     R0, PSP
     MSR     MSP, R0
     MOV     R0, 0x2                         @ -- Use MSP for OS task
@@ -50,14 +43,7 @@ nanokernel_enableMSP:
     ORN     R1, R0                          @ -- complement R0 and then or it with R1
     MSR     CONTROL, R1
     ISB
-    pop     {R0-R1}
-    BX      LR
-
-nanokernel_updateMSP:
-    push    {R0}
-    MRS     R0, PSP
-    MSR     MSP, R0
-    pop     {R0}
+/*    pop     {R0-R1}*/
     BX      LR
 /**************************************************************************/
 
@@ -66,7 +52,8 @@ nanokernel_updateMSP:
 PendSVHandler:
     CPSID   I                               @ 2) Prevent interrupt during switch
 
-/*    BL nanokernel_updateMSP*/
+   /* MRS     R0, PSP                         @ -- update MSP
+    MSR     MSP, R0*/
 
     PUSH    {R4-R11}                        @ 3) Save remaining regs r4-11
 
@@ -79,7 +66,8 @@ PendSVHandler:
 
     POP     {R4-R11}                        @ 8) restore regs r4-11
 
-/*    BL nanokernel_updatePSP                 @ in exception mode MSP is used*/
+    /*MRS     R0, MSP                         @ -- update MSP
+    MSR     PSP, R0                         @ in exception mode MSP is used*/
 
     CPSIE   I                               @ 9) tasks run with interrupts enabled
     BX      LR                              @ 10) restore R0-R3,R12,LR,PC,PSR
