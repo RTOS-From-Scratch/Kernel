@@ -11,6 +11,11 @@
 // TODO: make sure that these functions will not re-called
 static IPQueue *ready_processes;
 static nanokernel_Task_t* curr_task;
+// current scheduler used
+static void(*nanokernel_scheduler)() = NULL;
+
+extern void nanokernel_enableMSP();
+extern void nanokernel_enablePSP();
 
 void __nanokernel_Scheduler_Preemptive_init(int8_t max_processes_num)
 {
@@ -20,7 +25,28 @@ void __nanokernel_Scheduler_Preemptive_init(int8_t max_processes_num)
     ready_processes = IPQueue_new(max_processes_num);
 }
 
-void __nanokernel_SchedulerPreemptive_run()
+__Scheduler __nanokernel_getScheduler()
+{
+    return nanokernel_scheduler;
+}
+
+void __nanokernel_Scheduler_Preemptive_updateNullableCurrentTask()
+{
+    // if there is no other tasks
+    if( IPQueue_isEmpty(ready_processes) )
+        nanokernel_Task_idle();
+
+    curr_task = __nanokernel_Scheduler_Preemptive_getNextTask();
+}
+
+void __nanokernel_Scheduler_Preemptive_updateLowerPriorityCurrentTask()
+{
+    // save the current task
+    IPQueue_push(ready_processes, curr_task->priority, curr_task);
+    // get highest priority task
+    curr_task = __nanokernel_Scheduler_Preemptive_getNextTask();
+}
+
 void __nanokernel_Scheduler_Preemptive_run()
 {
     // Preemptive scheduler
@@ -32,25 +58,24 @@ void __nanokernel_Scheduler_Preemptive_run()
         // freshly booted
         if( curr_task == NULL )
         {
-            // if there is no other tasks
-            if( IPQueue_isEmpty(ready_processes) )
-                nanokernel_Task_idle();
-            // TODO: no tasks in the queue
-            curr_task = __nanokernel_SchedulerPreemptive_getNextTask();
+            nanokernel_scheduler =
+                    __nanokernel_Scheduler_Preemptive_updateNullableCurrentTask;
+
             // context switch
             // TODO: MSP - PSP
+//            nanokernel_enablePSP();
             CONTEXT_SWITCH;
         }
 
         // task which has lower priority value means that it has higher priority
         else if( curr_task->priority > IPQueue_getHeadPriority(ready_processes) )
         {
-            // save the current task
-            IPQueue_push(ready_processes, curr_task->priority, curr_task);
-            // get highest priority task
-            curr_task = __nanokernel_SchedulerPreemptive_getNextTask();
+            nanokernel_scheduler =
+                    __nanokernel_Scheduler_Preemptive_updateLowerPriorityCurrentTask;
+
             // context switch
             // TODO: MSP - PSP
+//            nanokernel_enablePSP();
             CONTEXT_SWITCH;
         }
     }
@@ -80,6 +105,7 @@ nanokernel_Task_t *__nanokernel_Scheduler_getCurrentTask()
 
 void __nanokernel_Scheduler_Preemptive_endCurrentTask()
 {
+//    nanokernel_enableMSP();
     // terminate current task
     nanokernel_Task_terminate(curr_task);
 

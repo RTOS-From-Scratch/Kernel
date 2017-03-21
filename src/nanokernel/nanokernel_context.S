@@ -57,10 +57,23 @@ __nanokernel_Task_contextSwitch:
     PUSH    {R4-R11}                        @ 3) Save remaining regs r4-11
 
     @ TODO: use OS stack
-    push {LR}
-    BL  __nanokernel_getCurrentTask         @ -- get next task in R0
-    pop  {LR}
-/*    LDR     R1, [R0]                        @ -- load the the new task*/
+
+    push    {LR}
+    BL  __nanokernel_Scheduler_getCurrentTask @ -- get current task in R0
+    pop     {LR}
+
+    CBZ     R0, ON_NULL_CUR_TASK            @ branch if cuurent task is NULL
+    STR     SP, [R0]                        @ -- Save SP into TCB
+
+    ON_NULL_CUR_TASK:
+    push    {LR}
+    BL  __nanokernel_getScheduler
+    /* go to the function dereferenced from the returned pointer of function */
+    BLX     R0                              @ -- run the scheduler
+
+    BL  __nanokernel_Scheduler_getCurrentTask @ -- get current task in R0
+    pop     {LR}
+
     LDR     SP, [R0]
 
     POP     {R4-R11}                        @ 8) restore regs r4-11
