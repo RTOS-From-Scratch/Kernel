@@ -14,12 +14,13 @@ static nanokernel_Task_t* curr_task;
 void __nanokernel_SchedulerPreemptive_init(int8_t max_processes_num)
 {
     // TODO: This need to be called once
-//    scheduler = malloc(sizeof(__nanokernel_SchedulerPreemptive_t));
+//    scheduler = malloc(sizeof(__nanokernel_Scheduler_Preemptive_t));
     curr_task = NULL;
     ready_processes = IPQueue_new(max_processes_num);
 }
 
 void __nanokernel_SchedulerPreemptive_run()
+void __nanokernel_Scheduler_Preemptive_run()
 {
     // Preemptive scheduler
     // TODO: critical section
@@ -54,7 +55,7 @@ void __nanokernel_SchedulerPreemptive_run()
     }
 }
 
-void __nanokernel_SchedulerPreemptive_addTask(nanokernel_Task_t* task)
+void __nanokernel_Scheduler_Preemptive_addTask(nanokernel_Task_t* task)
 {
     // TODO: critical section
     IPQueue_push(ready_processes, task->priority, task );
@@ -63,20 +64,20 @@ void __nanokernel_SchedulerPreemptive_addTask(nanokernel_Task_t* task)
     if( __nanokernel_getState() <= __NOT_BOOTED ) return;
 
     // check if the added one has higher priority (lower priority value)
-    __nanokernel_SchedulerPreemptive_run();
+    __nanokernel_Scheduler_Preemptive_run();
 }
 
-nanokernel_Task_t* __nanokernel_SchedulerPreemptive_getNextTask()
+nanokernel_Task_t* __nanokernel_Scheduler_Preemptive_getNextTask()
 {
     return IPQueue_popHead(ready_processes);
 }
 
-nanokernel_Task_t *__nanokernel_getCurrentTask()
+nanokernel_Task_t *__nanokernel_Scheduler_getCurrentTask()
 {
     return curr_task;
 }
 
-void __nanokernel_SchedulerPreemptive_endCurrentTask()
+void __nanokernel_Scheduler_Preemptive_endCurrentTask()
 {
     // terminate current task
     nanokernel_Task_terminate(curr_task);
@@ -84,10 +85,10 @@ void __nanokernel_SchedulerPreemptive_endCurrentTask()
     // to get the next higher priority task and run it
     curr_task = NULL;
 
-    __nanokernel_SchedulerPreemptive_run();
+    __nanokernel_Scheduler_Preemptive_run();
 }
 
-void __nanokernel_SchedulerPreemptive_clean()
+void __nanokernel_Scheduler_Preemptive_clean()
 {
     IPQueue_clean(ready_processes);
 }

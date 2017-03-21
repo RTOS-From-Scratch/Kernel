@@ -37,7 +37,7 @@ void __nanokernel_Task_initStack( nanokernel_Task_t* task )
     // This is simillar to the interrupt arrangement
     *(task->stack_start - 1)  = 0x01000000;    // Thumb bit - xPSR
     *(task->stack_start - 2)  = (int32_t)task->run;    // PC
-    *(task->stack_start - 3)  = (int32_t)__nanokernel_SchedulerPreemptive_endCurrentTask;    // R14 - LR
+    *(task->stack_start - 3)  = (int32_t)__nanokernel_Scheduler_Preemptive_endCurrentTask;    // R14 - LR
     *(task->stack_start - 4)  = 0x12121212;    // R12
     *(task->stack_start - 5)  = 0x03030303;    // R3
     *(task->stack_start - 6)  = 0x02020202;    // R2
@@ -74,7 +74,7 @@ nanokernel_Task_t* nanokernel_Task_create(uint32_t stack_size, Priority_t priori
     __nanokernel_Task_initStack(task);
 
     // add the created task to the scheduler
-    __nanokernel_SchedulerPreemptive_addTask(task);
+    __nanokernel_Scheduler_Preemptive_addTask(task);
 
     return task;
 }
