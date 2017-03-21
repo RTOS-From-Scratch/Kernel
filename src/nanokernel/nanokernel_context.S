@@ -4,10 +4,9 @@
 .syntax unified                            @ Force thumb syntax - `https://sourceware.org/binutils/docs/as/ARM_002dInstruction_002dSet.html#ARM_002dInstruction_002dSet`
 .global nanokernel_Task_context
 .global nanokernel_Task_loadStack
-.global PendSVHandler
+.global __nanokernel_Task_contextSwitch
 .global nanokernel_enablePSP
 .global nanokernel_enableMSP
-.extern nanokernel_scheduler
 
 nanokernel_Task_loadStack:
     MOV     SP, R0                          @ load the stack pointer
@@ -49,7 +48,7 @@ nanokernel_enableMSP:
 
 /****************************** Context switch ****************************/
 .thumb_func                                 @ -- Thumb encoded function
-PendSVHandler:
+__nanokernel_Task_contextSwitch:
     CPSID   I                               @ 2) Prevent interrupt during switch
 
    /* MRS     R0, PSP                         @ -- update MSP

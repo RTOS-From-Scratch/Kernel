@@ -4,6 +4,9 @@
 // TODO: for sure this need to be handled
 #define MAX_PROCESSES_NUM 10
 
+// This is declared in `nanokernel_context.S`
+extern void __nanokernel_Task_contextSwitch();
+
 void nanokernel_init()
 {
     // TODO: need to be called only once
@@ -12,7 +15,10 @@ void nanokernel_init()
     //    nanokernel_Task_loadStack(task->stack_ptr);
 
     // TODO: better way ?
-    __nanokernel_SchedulerPreemptive_init(MAX_PROCESSES_NUM);
+    // initiate the vector table
+    __nanokernel_ISR_vectorTable_init();
+    // put __nanokernel_Task_contextSwitch in vector table
+    __nanokernel_ISR_register( ISR_PEND_SV, __nanokernel_Task_contextSwitch );
 
     // change state from `not initiated` to `not booted`
     __nanokernel_setState(__NOT_BOOTED);
