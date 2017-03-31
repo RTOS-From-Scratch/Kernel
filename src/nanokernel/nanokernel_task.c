@@ -142,6 +142,18 @@ TaskID nanokernel_Task_getID()
 
 void nanokernel_Task_terminate( nanokernel_Task_t *task )
 {
+    __Driver *list = task->Drivers.list;
+
+    // release the drivers
+    for(uint8_t driver_index = 0;
+        driver_index <= task->Drivers.currentIndex;
+        driver_index++)
+    {
+        // call the deinit function
+        list[driver_index].deinit_func(list[driver_index].module_number, nanokernel_Task_getID());
+    }
+
+    task->Drivers.currentIndex = 0;
     // TODO: need prober way
 //    free(task);
 }
