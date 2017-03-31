@@ -6,6 +6,7 @@
 
 // TODO: need to find a prober way
 static int8_t id = 0;
+static nanokernel_Task_t* __nanokernel_Tasks[NUM_OF_TASKS];
 
 extern void nanokernel_Task_enablePSP();
 static void __nanokernel_Task_initStack( nanokernel_Task_t* task );
@@ -68,14 +69,16 @@ nanokernel_Task_t* nanokernel_Task_create(uint32_t stack_size, Priority_t priori
     task->stack_start = task->stack_ptr;
     task->priority = priority;
     task->run = run;
-
-    task->id = id++;
+    task->id = id;
 
     // init the stack
     __nanokernel_Task_initStack(task);
 
     // add the created task to the scheduler
      __nanokernel_Scheduler_Preemptive_addTask(task);
+
+    // add the new task to the array of tasks
+    __nanokernel_Tasks[id++] = task;
 
     return task;
 }
@@ -120,6 +123,13 @@ void __nanokernel_Task_releaseDriver(TaskID id, __Driver_deinit_func deinit_func
             }
         }
     }
+}
+
+TaskID nanokernel_Task_getID()
+{
+    //FIXME: critical section
+    // return ID of the current task
+    return __nanokernel_Scheduler_getCurrentTask()->id;
 }
 
 void nanokernel_Task_terminate( nanokernel_Task_t *task )

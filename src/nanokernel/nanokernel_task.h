@@ -22,5 +22,7 @@ typedef enum Priority_t {
 // functions
 nanokernel_Task_t* nanokernel_Task_create(uint32_t stack_size, Priority_t priority, void (*run)());
 void nanokernel_Task_terminate( nanokernel_Task_t *task );
+// return ID of the current task
+TaskID nanokernel_Task_getID();
 
 #endif // NANOKERNEL_TASK_H_
