@@ -4,8 +4,8 @@
 #include "inner/__nanokernel_task.h"
 #include "Misc/src/definitions.h"
 
-// TODO: need to find a prober way
-static int8_t id = 0;
+// task 0 should be used if the driver initiated outside a task
+static int8_t id = 1;
 static nanokernel_Task_t* __nanokernel_Tasks[NUM_OF_TASKS];
 
 extern void nanokernel_Task_enablePSP();
