@@ -2,7 +2,7 @@
 #include "nanokernel_task.h"
 #include "nanokernel.h"
 #include "inner/inner_nanokernel.h"
-#include "../../../DataStructures/src/inverted_priority_queue.h"
+#include "DataStructures/src/inverted_priority_queue.h"
 #include "nanokernel_task_idle.h"
 
 // PS -> Preemptive Scheduler
