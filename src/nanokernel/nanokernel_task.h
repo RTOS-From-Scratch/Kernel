@@ -2,6 +2,7 @@
 #define NANOKERNEL_TASK_H_
 
 #include "nanokernel.h"
+#include "inner/__nanokernel_task.h"
 #include <stddef.h>
 #include <stdint.h>
 

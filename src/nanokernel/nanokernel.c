@@ -1,5 +1,6 @@
 #include "nanokernel.h"
 #include "nanokernel_scheduler.h"
+#include "inner/__nanokernel_context_switch.h"
 
 // TODO: for sure this need to be handled
 #define MAX_PROCESSES_NUM 10

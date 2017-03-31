@@ -2,8 +2,7 @@
 #define NANOKERNEL_H_
 
 #include "tm4c123gh6pm.h"
-#include "inner/inner_nanokernel.h"
-#include "inner/inner_nanokernel_task.h"
+#include "inner/__nanokernel.h"
 #include "nanokernel_ISR_vectortable.h"
 
 typedef enum Priority_t {
