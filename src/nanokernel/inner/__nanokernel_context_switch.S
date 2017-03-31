@@ -2,7 +2,6 @@
 .ALIGN 0
 .thumb
 .syntax unified                            @ Force thumb syntax - `https://sourceware.org/binutils/docs/as/ARM_002dInstruction_002dSet.html#ARM_002dInstruction_002dSet`
-.global nanokernel_Task_context
 .global nanokernel_Task_loadStack
 .global __nanokernel_Task_contextSwitch
 .global nanokernel_enablePSP
