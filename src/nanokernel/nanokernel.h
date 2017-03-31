@@ -5,17 +5,6 @@
 #include "inner/__nanokernel.h"
 #include "nanokernel_ISR_vectortable.h"
 
-typedef enum Priority_t {
-    PRIORITY_0, // highest priority
-    PRIORITY_1,
-    PRIORITY_2,
-    PRIORITY_3,
-    PRIORITY_4,
-    PRIORITY_5,
-    PRIORITY_6,
-    PRIORITY_7, // lowest priority
-} Priority_t;
-
 void nanokernel_init();
 // boot up the system ( using the nano kernel )
 // it will never return
