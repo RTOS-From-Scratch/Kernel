@@ -5,8 +5,6 @@
 // TODO: for sure this need to be handled
 #define MAX_PROCESSES_NUM 10
 
-// This is declared in `nanokernel_context.S`
-extern void __nanokernel_Task_contextSwitch();
 
 void nanokernel_init()
 {

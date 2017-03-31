@@ -11,7 +11,7 @@ nanokernel_Task_t* __nanokernel_Scheduler_Preemptive_getNextTask();
 // TODO: change name `run`
 void __nanokernel_Scheduler_Preemptive_run();
 void __nanokernel_Scheduler_Preemptive_endCurrentTask();
-nanokernel_Task_t* __nanokernel_getCurrentTask();
+nanokernel_Task_t *__nanokernel_Scheduler_getCurrentTask();
 __Scheduler __nanokernel_getScheduler();
 void __nanokernel_Scheduler_Preemptive_clean();
 

@@ -7,7 +7,6 @@
 // TODO: need to find a prober way
 static int8_t id = 0;
 
-//void nanokernel_Task_loadStack( int32_t* curr_stack_ptr );
 extern void nanokernel_Task_enablePSP();
 static void __nanokernel_Task_initStack( nanokernel_Task_t* task );
 
@@ -20,7 +19,7 @@ static void __nanokernel_Task_initStack( nanokernel_Task_t* task );
 //    ASM (
 //        "CPSID   I                  @ 2) Prevent interrupt during switch\n\t"
 //        "PUSH    {R4-R11}           @ 3) Save remaining regs r4-11\n\t"
-//        "LDR     R0, =curr_task  @ 4) R0=pointer to RunPt, old thread\n\t"
+//        "LDR     R0, =curr_task     @ 4) R0=pointer to RunPt, old thread\n\t"
 //        "LDR     R1, [R0]           @    R1 = RunPt\n\t"
 //        "STR     SP, [R1]           @ 5) Save SP into TCB\n\t"
 //        "LDR     R1, [R1,#24]       @ 6) R1 = RunPt->next\n\t"
@@ -64,8 +63,8 @@ nanokernel_Task_t* nanokernel_Task_create(uint32_t stack_size, Priority_t priori
         return NULL;
 
     task->stack_end = task->stack;
-    task->stack_size = stack_size;
-    task->stack_ptr = (int32_t *)( (int8_t *)task->stack + stack_size );
+    task->stack_size = stack_len;
+    task->stack_ptr = (intptr_t *)( (int8_t *)task->stack + stack_len );
     task->stack_start = task->stack_ptr;
     task->priority = priority;
     task->run = run;
@@ -76,7 +75,7 @@ nanokernel_Task_t* nanokernel_Task_create(uint32_t stack_size, Priority_t priori
     __nanokernel_Task_initStack(task);
 
     // add the created task to the scheduler
-    __nanokernel_Scheduler_Preemptive_addTask(task);
+     __nanokernel_Scheduler_Preemptive_addTask(task);
 
     return task;
 }

@@ -1,7 +1,5 @@
 #include "nanokernel_scheduler.h"
 #include "nanokernel_task.h"
-#include "nanokernel.h"
-#include "inner/inner_nanokernel.h"
 #include "DataStructures/src/inverted_priority_queue.h"
 #include "nanokernel_task_idle.h"
 
@@ -14,8 +12,8 @@ static nanokernel_Task_t* curr_task;
 // current scheduler used
 static void(*nanokernel_scheduler)() = NULL;
 
-extern void nanokernel_enableMSP();
-extern void nanokernel_enablePSP();
+extern void __nanokernel_enableMSP();
+extern void __nanokernel_enablePSP();
 
 void __nanokernel_Scheduler_Preemptive_init(int8_t max_processes_num)
 {
@@ -42,7 +40,7 @@ void __nanokernel_Scheduler_Preemptive_updateNullableCurrentTask()
 void __nanokernel_Scheduler_Preemptive_updateLowerPriorityCurrentTask()
 {
     // save the current task
-    IPQueue_push(ready_processes, curr_task->priority, curr_task);
+    IPQueue_push(ready_processes, curr_task->priority, (void*)curr_task);
     // get highest priority task
     curr_task = __nanokernel_Scheduler_Preemptive_getNextTask();
 }
@@ -63,7 +61,7 @@ void __nanokernel_Scheduler_Preemptive_run()
 
             // context switch
             // TODO: MSP - PSP
-//            nanokernel_enablePSP();
+//            __nanokernel_enablePSP();
             CONTEXT_SWITCH;
         }
 
@@ -75,7 +73,7 @@ void __nanokernel_Scheduler_Preemptive_run()
 
             // context switch
             // TODO: MSP - PSP
-//            nanokernel_enablePSP();
+//            __nanokernel_enablePSP();
             CONTEXT_SWITCH;
         }
     }
@@ -105,7 +103,7 @@ nanokernel_Task_t *__nanokernel_Scheduler_getCurrentTask()
 
 void __nanokernel_Scheduler_Preemptive_endCurrentTask()
 {
-//    nanokernel_enableMSP();
+//    __nanokernel_enableMSP();
     // terminate current task
     nanokernel_Task_terminate(curr_task);
 
