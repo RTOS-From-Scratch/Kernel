@@ -1,5 +1,7 @@
 #include "nanokernel_task.h"
 #include "nanokernel_scheduler.h"
+#include "Drivers/src/Timer.h"
+#include "Drivers/src/inner/inner_IO.h"
 #include <stdlib.h>
 
 // TODO: need to find a prober way
@@ -83,4 +85,21 @@ void nanokernel_Task_terminate( nanokernel_Task_t *task )
 {
     // TODO: need prober way
 //    free(task);
+}
+
+void nanokernel_periodicTask(void(*task)(void), uint32_t value)
+{
+    //TODO: START CRITICAL
+    //store I bit and disable interrupts
+
+    //user function
+    PeriodicTask = task;
+
+    Timer_init(TIMER0_A_PORTB, __periodic_timer, __DOWN, value);
+//    IO_REG(NVIC_R, PRI4) |= (IO_REG(NVIC_R, PRI4)&0x00FFFFFF)|0x80000000;
+    IO_REG(NVIC_R, EN0) |= (1<<19);
+    IO_REG(__Timer_Addr[0], TIMER_CTL_R) |= (1<< 0);
+
+    //TODO: END CRITICAL
+    //restore I bit and enable interrupts
 }
