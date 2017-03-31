@@ -55,14 +55,22 @@ void __nanokernel_Task_initStack( nanokernel_Task_t* task )
     *(task->stack_ptr = task->stack_start - 16) = 0x04040404;    // R4
 }
 
-nanokernel_Task_t* nanokernel_Task_create(uint32_t stack_size, Priority_t priority, void (*run)())
+nanokernel_Task_t* nanokernel_Task_create(size_t stack_len, Priority_t priority,
+                                          void (*run)(), uint8_t maxNumberOfDrivers)
 {
-    nanokernel_Task_t *task = malloc(sizeof(nanokernel_Task_t) + stack_size);
+    nanokernel_Task_t *task = malloc(sizeof(nanokernel_Task_t) +
+                                     stack_len +
+                                     (maxNumberOfDrivers * sizeof(__Driver)));
 
     // TODO: do something here
     if( task == NULL )
         return NULL;
 
+    task->Drivers.list = (__Driver *)task->chunkOfMemory;
+    task->Drivers.len = maxNumberOfDrivers;
+    task->Drivers.currentIndex = -1;
+
+    task->stack = (intptr_t*)((int8_t *)task->Drivers.list + (maxNumberOfDrivers * sizeof(__Driver)));
     task->stack_end = task->stack;
     task->stack_size = stack_len;
     task->stack_ptr = (intptr_t *)( (int8_t *)task->stack + stack_len );

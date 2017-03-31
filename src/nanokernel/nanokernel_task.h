@@ -20,7 +20,10 @@ typedef enum Priority_t {
 } Priority_t;
 
 // functions
-nanokernel_Task_t* nanokernel_Task_create(uint32_t stack_size, Priority_t priority, void (*run)());
+nanokernel_Task_t* nanokernel_Task_create( size_t stack_len,
+                                           Priority_t priority,
+                                           void (*run)(),
+                                           uint8_t maxNumberOfDrivers );
 void nanokernel_Task_terminate( nanokernel_Task_t *task );
 // return ID of the current task
 TaskID nanokernel_Task_getID();
