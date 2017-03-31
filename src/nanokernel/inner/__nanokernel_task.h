@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include "../Misc/src/definitions.h"
 
 struct __nanokernel_Task_t {
     int32_t* stack_ptr;

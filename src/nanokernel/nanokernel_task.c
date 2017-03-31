@@ -2,6 +2,7 @@
 #include "nanokernel_scheduler.h"
 #include <stdlib.h>
 #include "inner/__nanokernel_task.h"
+#include "Misc/src/definitions.h"
 
 // TODO: need to find a prober way
 static int8_t id = 0;
