@@ -1,11 +1,11 @@
 #include "nanokernel.h"
 #include "nanokernel_scheduler.h"
+#include "Misc/src/assert.h"
+#include "inner/__nanokernel_context_switch.h"
 
 // TODO: for sure this need to be handled
 #define MAX_PROCESSES_NUM 10
 
-// This is declared in `nanokernel_context.S`
-extern void __nanokernel_Task_contextSwitch();
 
 void nanokernel_init()
 {
@@ -20,6 +20,14 @@ void nanokernel_init()
     __nanokernel_ISR_vectorTable_init();
     // put __nanokernel_Task_contextSwitch in vector table
     __nanokernel_ISR_register( ISR_PEND_SV, __nanokernel_Task_contextSwitch );
+
+#ifdef PC_COMMUNICATION
+    __SYS_UART_init();
+#endif
+    // init assert system
+#if !defined(NDEBUG) && defined(PC_COMMUNICATION)
+    ASSERT_init(SYS_UART_writeLine);
+#endif
 
     // change state from `not initiated` to `not booted`
     __nanokernel_setState(__NOT_BOOTED);

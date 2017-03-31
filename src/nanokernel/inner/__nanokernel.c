@@ -1,4 +1,4 @@
-#include "inner_nanokernel.h"
+#include "__nanokernel.h"
 
 static __nanokernel_States nanokernel_state = __NOT_INITIATED;
 

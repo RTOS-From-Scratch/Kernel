@@ -1,15 +1,6 @@
 #ifndef INNER_NANOKERNEL_H_
 #define INNER_NANOKERNEL_H_
 
-#ifdef __GNUC__
-    #define ASM __asm__ __volatile__
-    #define __NAKED __attribute__((naked))
-    #define __NAKED_ISR __attribute__((naked, isr))
-    #define NOP ASM("NOP")
-#else
-    #error "You should use `arm-none-eabi` toolchain"
-#endif // __GNUC__
-
 enum __nanokernel_States {
     __NOT_INITIATED = -2,
     __NOT_BOOTED = -1,
