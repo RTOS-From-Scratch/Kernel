@@ -80,6 +80,48 @@ nanokernel_Task_t* nanokernel_Task_create(uint32_t stack_size, Priority_t priori
     return task;
 }
 
+void __nanokernel_Task_holdDriver(TaskID id, __Driver_deinit_func deinit_func, int module_number)
+{
+    // if id is not equal zero
+    if(id is_not TASKLESS)
+    {
+        nanokernel_Task_t* task = __nanokernel_Tasks[id];
+
+        // reaches maximum number of tasks
+        if(task->Drivers.currentIndex == (task->Drivers.len - 1))
+        {
+            // TODO: do something here
+        }
+
+        task->Drivers.list[++task->Drivers.currentIndex].deinit_func = deinit_func;
+        task->Drivers.list[task->Drivers.currentIndex].module_number = module_number;
+    }
+}
+
+void __nanokernel_Task_releaseDriver(TaskID id, __Driver_deinit_func deinit_func, int module_number)
+{
+    // if id is not equal zero
+    if(id is_not TASKLESS)
+    {
+        nanokernel_Task_t* task = __nanokernel_Tasks[id];
+        __Driver *list = task->Drivers.list;
+
+        // TODO: need better way to the search for the needed driver to be removed
+        for(uint8_t driver_index = 0; driver_index < task->Drivers.len; ++driver_index)
+        {
+            if( list[driver_index].deinit_func   == deinit_func &&
+                list[driver_index].module_number == module_number )
+            {
+                // move the last element in the place of the removed driver
+                list[task->Drivers.currentIndex].deinit_func     =
+                        list[task->Drivers.len - 1].deinit_func;
+                list[task->Drivers.currentIndex--].module_number =
+                        list[task->Drivers.len - 1].module_number;
+            }
+        }
+    }
+}
+
 void nanokernel_Task_terminate( nanokernel_Task_t *task )
 {
     // TODO: need prober way
