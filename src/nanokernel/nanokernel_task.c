@@ -160,7 +160,7 @@ void nanokernel_Task_terminate( nanokernel_Task_t *task )
 //    free(task);
 }
 
-void nanokernel_periodicTask(void(*task)(void), uint32_t value)
+void nanokernel_Task_delayedStart(void(*task)(void), uint32_t value)
 {
     //TODO: START CRITICAL
     //store I bit and disable interrupts

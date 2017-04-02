@@ -25,7 +25,7 @@ nanokernel_Task_t* nanokernel_Task_create( size_t stack_len,
                                            void (*run)(),
                                            uint8_t maxNumberOfDrivers );
 void nanokernel_Task_terminate( nanokernel_Task_t *task );
-void nanokernel_periodicTask(void(*task)(void), uint32_t value);
+void nanokernel_Task_delayedStart(void(*task)(void), uint32_t value);
 // return ID of the current task
 TaskID nanokernel_Task_getID();
 
