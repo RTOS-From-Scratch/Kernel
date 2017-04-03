@@ -142,6 +142,7 @@ TaskID nanokernel_Task_getID()
 
 void nanokernel_Task_terminate( nanokernel_Task_t *task )
 {
+    // TODO: critical section
     __Driver *list = task->Drivers.list;
 
     // release the drivers

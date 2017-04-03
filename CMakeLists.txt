@@ -78,10 +78,11 @@ endif( NOT EXISTS ${PROJ_PATH}/tm4c123gh6pm.h )
 if(${RFS_TESTING_${PROJECT_NAME}})
     SET(${PROJECT_NAME}_NetworkSources ${PROJ_PATH}/../DataStructures/src/inverted_priority_queue.c
                                        ${PROJ_PATH}/../DataStructures/src/priority_queue.c
-                                       ${PROJ_PATH}/../DataStructures/src/inner/inner_priority_queue.c
-                                       ${PROJ_PATH}/../Drivers/src/inner/inner_IO.c
+                                       ${PROJ_PATH}/../DataStructures/src/inner/__priority_queue.c
+                                       ${PROJ_PATH}/../Drivers/src/inner/__IO.c
                                        ${PROJ_PATH}/../Drivers/src/UART.c
-                                       ${PROJ_PATH}/../Drivers/src/GPIO.c)
+                                       ${PROJ_PATH}/../Drivers/src/GPIO.c
+                                       ${PROJ_PATH}/../Drivers/src/inner/__ISR_ctrl.S)
 endif(${RFS_TESTING_${PROJECT_NAME}})
 ##################################################################
 

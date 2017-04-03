@@ -107,6 +107,10 @@ void __nanokernel_Scheduler_Preemptive_endCurrentTask()
     // terminate current task
     nanokernel_Task_terminate(curr_task);
 
+    // TODO: remove from the queue of tasks
+    // TODO: remove from blocked queue
+    IPQueue_remove( ready_processes, curr_task );
+
     // to get the next higher priority task and run it
     curr_task = NULL;
 
