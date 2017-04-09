@@ -8,6 +8,8 @@
 
 typedef struct __nanokernel_Task_t nanokernel_Task_t;
 
+// This is an example of the priorties used
+// you can use any positive number in the range of an `int`
 typedef enum Priority_t {
     PRIORITY_0, // highest priority
     PRIORITY_1,
