@@ -61,7 +61,7 @@ __nanokernel_Task_contextSwitch:
     BL  __nanokernel_Scheduler_getCurrentTask @ -- get current task in R0
     pop     {LR}
 
-    CBZ     R0, ON_NULL_CUR_TASK            @ branch if cuurent task is NULL
+    CBZ     R0, ON_NULL_CUR_TASK            @ branch if current task is NULL
     STR     SP, [R0]                        @ -- Save SP into TCB
 
     ON_NULL_CUR_TASK:

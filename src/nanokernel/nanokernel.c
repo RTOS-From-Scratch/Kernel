@@ -1,11 +1,8 @@
 #include "nanokernel.h"
 #include "nanokernel_scheduler.h"
 #include "Misc/src/assert.h"
+#include "Misc/src/definitions.h"
 #include "inner/__nanokernel_context_switch.h"
-
-// TODO: for sure this need to be handled
-#define MAX_PROCESSES_NUM 10
-
 
 void nanokernel_init()
 {
@@ -15,7 +12,7 @@ void nanokernel_init()
     //    nanokernel_Task_loadStack(task->stack_ptr);
 
     // TODO: better way ?
-    __nanokernel_Scheduler_Preemptive_init(MAX_PROCESSES_NUM);
+    __nanokernel_Scheduler_Preemptive_init(NUM_OF_TASKS);
     // initiate the vector table
     __nanokernel_ISR_vectorTable_init();
     // put __nanokernel_Task_contextSwitch in vector table

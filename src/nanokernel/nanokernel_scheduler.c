@@ -12,6 +12,7 @@ static nanokernel_Task_t* curr_task;
 // current scheduler used
 static void(*nanokernel_scheduler)() = NULL;
 
+// TODO: remove these
 extern void __nanokernel_enableMSP();
 extern void __nanokernel_enablePSP();
 
