@@ -1,6 +1,9 @@
 #include "nanokernel_task_idle.h"
+#include "Drivers/src/ISR_ctrl.h"
 
 void nanokernel_Task_idle()
 {
-    while(1);
+    // suspend execution until an interrupt come
+    // one of the saving mode
+    ISR_WaitForInterrupt();
 }
