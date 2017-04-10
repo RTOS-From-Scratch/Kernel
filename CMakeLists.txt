@@ -79,10 +79,13 @@ if(${RFS_TESTING_${PROJECT_NAME}})
     SET(${PROJECT_NAME}_NetworkSources ${PROJ_PATH}/../DataStructures/src/inverted_priority_queue.c
                                        ${PROJ_PATH}/../DataStructures/src/priority_queue.c
                                        ${PROJ_PATH}/../DataStructures/src/inner/__priority_queue.c
+                                       ${PROJ_PATH}/../Drivers/src/ISR_ctrl.h
+                                       ${PROJ_PATH}/../Drivers/src/inner/__ISR_ctrl.S
                                        ${PROJ_PATH}/../Drivers/src/inner/__IO.c
+                                       ${PROJ_PATH}/../Drivers/src/inner/__driver.c
+                                       ${PROJ_PATH}/../Drivers/src/SPI.c
                                        ${PROJ_PATH}/../Drivers/src/UART.c
-                                       ${PROJ_PATH}/../Drivers/src/GPIO.c
-                                       ${PROJ_PATH}/../Drivers/src/inner/__ISR_ctrl.S)
+                                       ${PROJ_PATH}/../Drivers/src/GPIO.c)
 endif(${RFS_TESTING_${PROJECT_NAME}})
 ##################################################################
 

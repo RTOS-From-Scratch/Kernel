@@ -3,9 +3,9 @@
 #include <stdlib.h>
 #include "inner/__nanokernel_task.h"
 #include "Misc/src/definitions.h"
+#include "Drivers/src/inner/__driver.h"
 
-// task 0 should be used if the driver initiated outside a task
-static int8_t id = 1;
+static int8_t id = 0;
 static nanokernel_Task_t* __nanokernel_Tasks[NUM_OF_TASKS];
 
 extern void nanokernel_Task_enablePSP();
@@ -60,17 +60,17 @@ nanokernel_Task_t* nanokernel_Task_create(size_t stack_len, Priority_t priority,
 {
     nanokernel_Task_t *task = malloc(sizeof(nanokernel_Task_t) +
                                      stack_len +
-                                     (maxNumberOfDrivers * sizeof(__Driver)));
+                                     (maxNumberOfDrivers * sizeof(Driver)));
 
     // TODO: do something here
     if( task == NULL )
         return NULL;
 
-    task->Drivers.list = (__Driver *)task->chunkOfMemory;
-    task->Drivers.len = maxNumberOfDrivers;
-    task->Drivers.currentIndex = -1;
+    task->__HoldedDrivers.list = (Driver **)task->chunkOfMemory;
+    task->__HoldedDrivers.len = maxNumberOfDrivers;
+    task->__HoldedDrivers.currentIndex = -1;
 
-    task->stack = (intptr_t*)((int8_t *)task->Drivers.list + (maxNumberOfDrivers * sizeof(__Driver)));
+    task->stack = (intptr_t*)((int8_t *)task->__HoldedDrivers.list + (maxNumberOfDrivers * sizeof(Driver)));
     task->stack_end = task->stack;
     task->stack_size = stack_len;
     task->stack_ptr = (intptr_t *)( (int8_t *)task->stack + stack_len );
@@ -82,55 +82,68 @@ nanokernel_Task_t* nanokernel_Task_create(size_t stack_len, Priority_t priority,
     // init the stack
     __nanokernel_Task_initStack(task);
 
-    // add the created task to the scheduler
-     __nanokernel_Scheduler_Preemptive_addTask(task);
-
     // add the new task to the array of tasks
     __nanokernel_Tasks[id++] = task;
+
+    // add the created task to the scheduler
+    __nanokernel_Scheduler_Preemptive_addTask(task);
 
     return task;
 }
 
-void __nanokernel_Task_holdDriver(TaskID id, __Driver_deinit_func deinit_func, int module_number)
+Driver* nanokernel_Task_requestDriver( DriverName driverName, Module module )
 {
-    // if id is not equal zero
-    if(id is_not TASKLESS)
+    // FIXME: do something if the driver is not available
+    if( Driver_isAvailable( driverName, module ) is false )
+        return NULL;
+
+    Driver *driver;
+
+    if( id is_not TASKLESS )
     {
-        nanokernel_Task_t* task = __nanokernel_Tasks[id];
+         nanokernel_Task_t* task = __nanokernel_Scheduler_getCurrentTask();
 
-        // reaches maximum number of tasks
-        if(task->Drivers.currentIndex == (task->Drivers.len - 1))
-        {
-            // TODO: do something here
-        }
+        // reaches maximum number of holded drivers
+        // TODO: do something here
+        if(task->__HoldedDrivers.currentIndex EQUAL (task->__HoldedDrivers.len - 1))
+           return NULL;
 
-        task->Drivers.list[++task->Drivers.currentIndex].deinit_func = deinit_func;
-        task->Drivers.list[task->Drivers.currentIndex].module_number = module_number;
+        driver = Driver_construct( driverName, module );
+        task->__HoldedDrivers.list[++task->__HoldedDrivers.currentIndex] = driver;
     }
+
+    else
+    {
+        driver = Driver_construct( driverName, module );
+    }
+
+    return driver;
 }
 
-void __nanokernel_Task_releaseDriver(TaskID id, __Driver_deinit_func deinit_func, int module_number)
+void   nanokernel_Task_releaseDriver( Driver* driver )
 {
     // if id is not equal zero
-    if(id is_not TASKLESS)
+    if( id is_not TASKLESS )
     {
         nanokernel_Task_t* task = __nanokernel_Tasks[id];
-        __Driver *list = task->Drivers.list;
+        Driver **list = task->__HoldedDrivers.list;
 
         // TODO: need better way to the search for the needed driver to be removed
-        for(uint8_t driver_index = 0; driver_index < task->Drivers.len; ++driver_index)
+        for(uint8_t driver_index = 0; driver_index < task->__HoldedDrivers.len; ++driver_index)
         {
-            if( list[driver_index].deinit_func   == deinit_func &&
-                list[driver_index].module_number == module_number )
+            if( (list[driver_index]->driverName is driver->driverName) and
+                    (list[driver_index]->config is driver->config) )
             {
                 // move the last element in the place of the removed driver
-                list[task->Drivers.currentIndex].deinit_func     =
-                        list[task->Drivers.len - 1].deinit_func;
-                list[task->Drivers.currentIndex--].module_number =
-                        list[task->Drivers.len - 1].module_number;
+                Driver_deinit( list[driver_index] );
+                list[task->__HoldedDrivers.currentIndex--] = list[task->__HoldedDrivers.len - 1];
+                break;
             }
         }
     }
+
+    else
+        Driver_deinit( driver );
 }
 
 TaskID nanokernel_Task_getID()
@@ -143,18 +156,18 @@ TaskID nanokernel_Task_getID()
 void nanokernel_Task_terminate( nanokernel_Task_t *task )
 {
     // TODO: critical section
-    __Driver *list = task->Drivers.list;
+    Driver **list = task->__HoldedDrivers.list;
 
     // release the drivers
     for(uint8_t driver_index = 0;
-        driver_index <= task->Drivers.currentIndex;
+        driver_index <= task->__HoldedDrivers.currentIndex;
         driver_index++)
     {
         // call the deinit function
-        list[driver_index].deinit_func(list[driver_index].module_number, nanokernel_Task_getID());
+        Driver_deinit(list[driver_index]);
     }
 
-    task->Drivers.currentIndex = 0;
+    task->__HoldedDrivers.currentIndex = -1;
     // TODO: need prober way
 //    free(task);
 }
