@@ -15,7 +15,7 @@ struct __nanokernel_Task_t {
     long priority;
     void (*run)();
     intptr_t* stack;
-    // inner struct contains data about the drivers current task hols
+    // inner struct contains data about the drivers current task holds
     struct __HoldedDrivers {
         uint8_t len;
         int8_t currentIndex;
