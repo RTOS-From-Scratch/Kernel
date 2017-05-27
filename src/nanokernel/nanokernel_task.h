@@ -26,7 +26,8 @@ PUBLIC
     // functions
     nanokernel_Task_t* nanokernel_Task_create( size_t stack_len,
                                                Priority_t priority,
-                                               void (*nanokernel_Task_entry)(),
+                                               void (*nanokernel_Task_entry)(void*),
+                                               void* task_paramter,
                                                byte maxNumberOfDrivers );
     Driver* nanokernel_Task_requestDriver( DriverName driverName, Module module );
     void nanokernel_Task_releaseDriver( DriverName driverName, Driver *driver );

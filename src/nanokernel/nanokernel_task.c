@@ -64,7 +64,8 @@ void __nanokernel_Task_initStack( nanokernel_Task_t* task )
     *(task->stack_start - 23) = 0x03030303;    // R3
     *(task->stack_start - 24) = 0x02020202;    // R2
     *(task->stack_start - 25) = 0x01010101;    // R1
-    *(task->stack_start - 26) = 0x00000000;    // R0
+    // the task paramter go through R0
+    *(task->stack_start - 26) = (uintptr_t)task->parameter;    // R0
     *(task->stack_start - 27) = 0x11111111;    // R11
     *(task->stack_start - 28) = 0x10101010;    // R10
     *(task->stack_start - 29) = 0x09090909;    // R9
@@ -91,8 +92,11 @@ void __nanokernel_Task_initStack( nanokernel_Task_t* task )
     *(task->stack_ptr = task->stack_start - 50) = 0x16161616;    // s16
 }
 
-nanokernel_Task_t* nanokernel_Task_create( size_t stack_len, Priority_t priority,
-                                           void (*nanokernel_Task_entry)(), byte maxNumberOfDrivers )
+nanokernel_Task_t* nanokernel_Task_create( size_t stack_len,
+                                           Priority_t priority,
+                                           void (*nanokernel_Task_entry)(void*),
+                                           void *task_paramter,
+                                           byte maxNumberOfDrivers )
 {
     // stack_len should be aligned by the length of pointer
     size_t stack_size = stack_len * sizeof(intptr_t *);
@@ -121,6 +125,7 @@ nanokernel_Task_t* nanokernel_Task_create( size_t stack_len, Priority_t priority
     task->stack_start = task->stack_ptr;
     task->priority = priority;
     task->nanokernel_Task_entry = nanokernel_Task_entry;
+    task->parameter = task_paramter;
     task->id = id++;
 
     // this will hold the next equal priority task if exists

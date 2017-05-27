@@ -18,8 +18,9 @@ struct __nanokernel_Task_t {
     size_t stack_size;
     int8_t id;
     long priority;
-    void (*nanokernel_Task_entry)();
+    void (*nanokernel_Task_entry)(void*);
     intptr_t* stack;
+    void* parameter;
     // inner struct contains data about a groups of tasks has the same priority
     struct __EqualPriQueue {
         struct __nanokernel_Task_t* next;
