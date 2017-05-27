@@ -54,6 +54,7 @@ __nanokernel_Task_contextSwitch:
     MSR     MSP, R0*/
 
     PUSH    {R4-R11}                        @ 3) Save remaining regs r4-11
+    VPUSH   {s16-s31}                       @ -- Save remaining floating-point regs s16-s31
 
     @ TODO: use OS stack
 
@@ -75,6 +76,7 @@ __nanokernel_Task_contextSwitch:
 
     LDR     SP, [R0]
 
+    VPOP    {s16-s31}                       @ -- restore floating-point regs s16-s31
     POP     {R4-R11}                        @ 8) restore regs r4-11
 
     /*MRS     R0, MSP                         @ -- update MSP

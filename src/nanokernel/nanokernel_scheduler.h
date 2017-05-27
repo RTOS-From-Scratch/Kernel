@@ -3,16 +3,18 @@
 
 #include "nanokernel_task.h"
 
-typedef void (*__Scheduler)();
+PRIVATE
+    typedef void (*__Scheduler)();
 
-void __nanokernel_Scheduler_Preemptive_init(int8_t max_processes_num);
-void __nanokernel_Scheduler_Preemptive_addTask(nanokernel_Task_t* task);
-nanokernel_Task_t* __nanokernel_Scheduler_Preemptive_getNextTask();
-// TODO: change name `run`
-void __nanokernel_Scheduler_Preemptive_run();
-void __nanokernel_Scheduler_Preemptive_endCurrentTask();
-nanokernel_Task_t *__nanokernel_Scheduler_getCurrentTask();
-__Scheduler __nanokernel_getScheduler();
-void __nanokernel_Scheduler_Preemptive_clean();
+    // Premptive scheduler
+    void __nanokernel_Scheduler_Preemptive_init(int8_t max_processes_num);
+    void __nanokernel_Scheduler_Preemptive_addTask(nanokernel_Task_t* task);
+    nanokernel_Task_t* __nanokernel_Scheduler_Preemptive_getNextTask();
+    void __nanokernel_Scheduler_exec();
+    void __nanokernel_Scheduler_Preemptive_endCurrentTask();
+    nanokernel_Task_t *__nanokernel_Scheduler_getCurrentTask();
+    void __nanokernel_Scheduler_Preemptive_clean();
+
+    __Scheduler __nanokernel_getScheduler();
 
 #endif // NANOKERNEL_SCHEDULER_H_

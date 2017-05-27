@@ -3,6 +3,7 @@
 #include "Misc/src/assert.h"
 #include "Misc/src/definitions.h"
 #include "inner/__nanokernel_context_switch.h"
+#include "Drivers/src/UART.h"
 
 void nanokernel_init()
 {
@@ -14,16 +15,18 @@ void nanokernel_init()
     // TODO: better way ?
     __nanokernel_Scheduler_Preemptive_init(NUM_OF_TASKS);
     // initiate the vector table
-    __nanokernel_ISR_vectorTable_init();
+    __ISR_vectorTable_init();
     // put __nanokernel_Task_contextSwitch in vector table
-    __nanokernel_ISR_register( ISR_PEND_SV, __nanokernel_Task_contextSwitch );
+    __ISR_register( ISR_PEND_SV, __nanokernel_Task_contextSwitch );
 
 #ifdef PC_COMMUNICATION
-    __SYS_UART_init();
-#endif
-    // init assert system
-#if !defined(NDEBUG) && defined(PC_COMMUNICATION)
-    ASSERT_init(SYS_UART_writeLine);
+    // init System UART
+    SYS_UART_init();
+
+    #if !defined(NDEBUG)
+        // init assert system
+        ASSERT_init(SYS_UART_print);
+    #endif
 #endif
 
     // change state from `not initiated` to `not booted`
@@ -39,5 +42,5 @@ void nanokernel_bootup()
     __nanokernel_setState(__BOOTED);
 
     // run the scheduler
-    __nanokernel_Scheduler_Preemptive_run();
+    __nanokernel_Scheduler_exec();
 }
