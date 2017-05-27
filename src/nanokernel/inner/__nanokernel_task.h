@@ -26,7 +26,7 @@ struct __nanokernel_Task_t {
         // this variable is not NULL only in the `head` Task
         struct __nanokernel_Task_t* tail;
     } __EqualPriQueue;
-    // inner struct contains data about the drivers current task hols
+    // inner struct contains data about the drivers current task holds
     struct __HoldedDrivers {
         int8_t len;
         int8_t currentIndex;
