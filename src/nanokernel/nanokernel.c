@@ -5,15 +5,16 @@
 #include "inner/__nanokernel_context_switch.h"
 #include "Drivers/src/UART.h"
 
-void nanokernel_init()
+void nanokernel_init( byte numberOfTasks )
 {
-    // TODO: need to be called only once
+    __nanokernel_States nanokernel_currentState = __nanokernel_getState();
+    if( (nanokernel_currentState is __NOT_BOOTED) or
+        (nanokernel_currentState is __BOOTED) )
+        return;
 
     // TODO: save old stack first and load the new one
     //    nanokernel_Task_loadStack(task->stack_ptr);
 
-    // TODO: better way ?
-    __nanokernel_Scheduler_Preemptive_init(NUM_OF_TASKS);
     // initiate the vector table
     __ISR_vectorTable_init();
     // put __nanokernel_Task_contextSwitch in vector table
@@ -29,17 +30,28 @@ void nanokernel_init()
     #endif
 #endif
 
-    // change state from `not initiated` to `not booted`
-    __nanokernel_setState(__NOT_BOOTED);
+    if(numberOfTasks > 0)
+    {
+        // initiate the Premptive scheduler
+        __nanokernel_Scheduler_Preemptive_init(numberOfTasks);
+        // change state from `not initiated` to `not booted`
+        __nanokernel_setState(__NOT_BOOTED);
+    }
+
+    else
+    {
+        // that means This is Taskless state
+        // just the drivers is working
+        __nanokernel_setState(__TASKLESS);
+    }
 }
 
 void nanokernel_bootup()
 {
-    // FIXME: you can't just return !!
-    if( __nanokernel_getState() == __NOT_INITIATED )
+    if( __nanokernel_getState() is __NOT_INITIATED )
         return;
-
-    __nanokernel_setState(__BOOTED);
+    else if( __nanokernel_getState() is_not __TASKLESS )
+        __nanokernel_setState(__BOOTED);
 
     // run the scheduler
     __nanokernel_Scheduler_exec();

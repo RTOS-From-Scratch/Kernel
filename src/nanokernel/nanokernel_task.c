@@ -2,14 +2,14 @@
 #include "nanokernel_scheduler.h"
 #include "Drivers/src/Timer.h"
 #include "Drivers/src/inner/__IO.h"
-#include <stdlib.h>
 #include "inner/__nanokernel_task.h"
 #include "Misc/src/definitions.h"
 #include "Drivers/src/UART.h"
+#include <stdlib.h>
 
 static byte id = 0;
 
-extern void nanokernel_Task_enablePSP();
+//extern void nanokernel_Task_enablePSP();
 static void __nanokernel_Task_initStack( nanokernel_Task_t* task );
 
 /* By default GNU ARM compiler will store and restore a Frame Pointer
@@ -65,7 +65,7 @@ void __nanokernel_Task_initStack( nanokernel_Task_t* task )
     *(task->stack_start - 24) = 0x02020202;    // R2
     *(task->stack_start - 25) = 0x01010101;    // R1
     // the task paramter go through R0
-    *(task->stack_start - 26) = (uintptr_t)task->parameter;    // R0
+    *(task->stack_start - 26) = (intptr_t)task->parameter;    // R0
     *(task->stack_start - 27) = 0x11111111;    // R11
     *(task->stack_start - 28) = 0x10101010;    // R10
     *(task->stack_start - 29) = 0x09090909;    // R9
@@ -95,7 +95,7 @@ void __nanokernel_Task_initStack( nanokernel_Task_t* task )
 nanokernel_Task_t* nanokernel_Task_create( size_t stack_len,
                                            Priority_t priority,
                                            void (*nanokernel_Task_entry)(void*),
-                                           void *task_paramter,
+                                           void* task_paramter,
                                            byte maxNumberOfDrivers )
 {
     // stack_len should be aligned by the length of pointer
@@ -127,6 +127,7 @@ nanokernel_Task_t* nanokernel_Task_create( size_t stack_len,
     task->nanokernel_Task_entry = nanokernel_Task_entry;
     task->parameter = task_paramter;
     task->id = id++;
+    task->state= __READY;
 
     // this will hold the next equal priority task if exists
     // they will act like a closed circle, each task point to the next
@@ -145,7 +146,7 @@ nanokernel_Task_t* nanokernel_Task_create( size_t stack_len,
 
 Driver* nanokernel_Task_requestDriver( DriverName driverName, Module module )
 {
-    int current_task_id = nanokernel_Task_getID();
+    int current_task_id = nanokernel_Task_getCurrentTaskID();
     Driver *driver;
     __nanokernel_Task_Driver *task_driver;
 
@@ -183,7 +184,7 @@ void   nanokernel_Task_releaseDriver( DriverName driverName, Driver* driver )
 {
     /* This function called only explicitly by the user at any time
      * before the task is finished */
-    int current_task_id = nanokernel_Task_getID();
+    int current_task_id = nanokernel_Task_getCurrentTaskID();
     nanokernel_Task_t* task;
 
     // if id is not equal TASKLESS
@@ -210,7 +211,17 @@ void   nanokernel_Task_releaseDriver( DriverName driverName, Driver* driver )
         Driver_deinit( driverName, driver );
 }
 
-TaskID nanokernel_Task_getID()
+void nanokernel_Task_block(nanokernel_Task_t* task)
+{
+    __nanokernel_Scheduler_blockTask( task );
+}
+
+void nanokernel_Task_unblock( nanokernel_Task_t* task )
+{
+    __nanokernel_Scheduler_unblockTask( task );
+}
+
+TaskID nanokernel_Task_getCurrentTaskID()
 {
     //FIXME: critical section
     // return ID of the current task
@@ -219,6 +230,13 @@ TaskID nanokernel_Task_getID()
         return TASKLESS;
     else
         return __nanokernel_Scheduler_getCurrentTask()->id;
+}
+
+TaskID nanokernel_Task_getID( nanokernel_Task_t *task )
+{
+    //FIXME: critical section
+    // return ID of the current task
+    return task->id;
 }
 
 void nanokernel_Task_terminate( nanokernel_Task_t *task )

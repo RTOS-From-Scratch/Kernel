@@ -11,6 +11,12 @@ typedef struct __nanokernel_Task_Driver {
     Driver* driver;
 } __nanokernel_Task_Driver;
 
+typedef enum __nanokernel_Task_State {
+    __READY,
+    __BLOCKED,
+    __SUSPENDED,
+} __nanokernel_Task_State;
+
 struct __nanokernel_Task_t {
     intptr_t* stack_ptr;
     intptr_t* stack_start;
@@ -21,6 +27,7 @@ struct __nanokernel_Task_t {
     void (*nanokernel_Task_entry)(void*);
     intptr_t* stack;
     void* parameter;
+    __nanokernel_Task_State state;
     // inner struct contains data about a groups of tasks has the same priority
     struct __EqualPriQueue {
         struct __nanokernel_Task_t* next;

@@ -33,7 +33,10 @@ PUBLIC
     void nanokernel_Task_releaseDriver( DriverName driverName, Driver *driver );
     void nanokernel_Task_terminate( nanokernel_Task_t *task );
     void nanokernel_Task_delayedStart(void(*task)(void), uint32_t value);
+    void nanokernel_Task_block( nanokernel_Task_t* task );
+    void nanokernel_Task_unblock( nanokernel_Task_t* task );
     // return ID of the current task
-    TaskID nanokernel_Task_getID();
+    TaskID nanokernel_Task_getCurrentTaskID();
+    TaskID nanokernel_Task_getID( nanokernel_Task_t* task );
 
 #endif // NANOKERNEL_TASK_H_

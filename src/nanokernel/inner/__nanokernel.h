@@ -5,7 +5,7 @@ enum __nanokernel_States {
     __NOT_INITIATED = -2,
     __NOT_BOOTED = -1,
     __BOOTED,
-    __IDLE,
+    __TASKLESS,
 };
 
 typedef enum __nanokernel_States __nanokernel_States;
