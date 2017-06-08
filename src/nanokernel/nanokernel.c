@@ -22,8 +22,7 @@ void nanokernel_init( byte numberOfTasks )
     __ISR_register( ISR_PEND_SV, __nanokernel_Task_contextSwitch );
 
     // enable PLL `system clock`
-    // FIXME: the value should be get from cmake
-    PLL_setClockSpeed(ClockSpeed_MHZ_80);
+    PLL_setClockSpeed(SYS_CLK_SPEED_IN_MHZ);
 
 #ifdef PC_COMMUNICATION
     // init System UART
