@@ -4,6 +4,7 @@
 #include "Misc/src/definitions.h"
 #include "inner/__nanokernel_context_switch.h"
 #include "Drivers/src/UART.h"
+#include "Drivers/src/PLL.h"
 
 void nanokernel_init( byte numberOfTasks )
 {
@@ -19,6 +20,10 @@ void nanokernel_init( byte numberOfTasks )
     __ISR_vectorTable_init();
     // put __nanokernel_Task_contextSwitch in vector table
     __ISR_register( ISR_PEND_SV, __nanokernel_Task_contextSwitch );
+
+    // enable PLL `system clock`
+    // FIXME: the value should be get from cmake
+    PLL_setClockSpeed(ClockSpeed_MHZ_80);
 
 #ifdef PC_COMMUNICATION
     // init System UART
