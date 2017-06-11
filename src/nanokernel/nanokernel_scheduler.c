@@ -4,6 +4,7 @@
 #include "nanokernel_task_idle.h"
 #include "Drivers/src/inner/__systick.h"
 #include <stdlib.h>
+#include <string.h>
 
 // PS -> Preemptive Scheduler
 #define CONTEXT_SWITCH      NVIC_INT_CTRL_R |= NVIC_INT_CTRL_PEND_SV
@@ -38,8 +39,10 @@ static void __nanokernel_Scheduler_Preemptive_changeTaskState(nanokernel_Task_t*
 void __nanokernel_Scheduler_Preemptive_init( byte max_tasks_num )
 {
     // TODO: This need to be called once
-//    scheduler = malloc(sizeof(__nanokernel_Scheduler_Preemptive_t));
-    __nanokernel_scheduler.tasks = malloc(sizeof(SortedLinkedListWithID_Node_t));
+    __nanokernel_scheduler.tasks = malloc( max_tasks_num *
+                                           sizeof(SortedLinkedListWithID_Node_t) );
+    memset( __nanokernel_scheduler.tasks, 0, max_tasks_num *
+                                             sizeof(SortedLinkedListWithID_Node_t) );
     __nanokernel_scheduler.curr_task = NULL;
     __nanokernel_scheduler.curr_equalPriority_task = NULL;
     __nanokernel_scheduler.scheduler = NULL;
