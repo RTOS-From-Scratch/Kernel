@@ -35,61 +35,66 @@ static void __nanokernel_Task_initStack( nanokernel_Task_t* task );
 
 void __nanokernel_Task_initStack( nanokernel_Task_t* task )
 {
+    byte iii = 0;
     // The stack intialized by this way for debugging purpose
     // R4-R11 -> R0-R3 -> R12 -> LR -> PC -> xPSR (Push)
     // register `s` is for floating-point registers
     // This is simillar to the interrupt arrangement
-    *(task->stack_start - 1)  = 0x00000000;    // empty gap
-    *(task->stack_start - 2)  = 0x00000000;    // FPSCR
-    *(task->stack_start - 3)  = 0x15151515;    // s15
-    *(task->stack_start - 4)  = 0x14141414;    // s14
-    *(task->stack_start - 5)  = 0x13131313;    // s13
-    *(task->stack_start - 6)  = 0x12121212;    // s12
-    *(task->stack_start - 7)  = 0x11111111;    // s11
-    *(task->stack_start - 8)  = 0x10101010;    // s10
-    *(task->stack_start - 0)  = 0x09090909;    // s9
-    *(task->stack_start - 10) = 0x08080808;    // s8
-    *(task->stack_start - 11) = 0x07070707;    // s7
-    *(task->stack_start - 12) = 0x06060606;    // s6
-    *(task->stack_start - 13) = 0x05050505;    // s5
-    *(task->stack_start - 14) = 0x04040404;    // s4
-    *(task->stack_start - 15) = 0x03030303;    // s3
-    *(task->stack_start - 16) = 0x02020202;    // s2
-    *(task->stack_start - 17) = 0x01010101;    // s1
-    *(task->stack_start - 18) = 0x00000000;    // s0
-    *(task->stack_start - 19) = 0x01000000;    // Thumb bit - xPSR
-    *(task->stack_start - 20) = (intptr_t)task->nanokernel_Task_entry;    // PC
-    *(task->stack_start - 21) = (intptr_t)__nanokernel_Scheduler_Preemptive_endCurrentTask;    // R14 - LR
-    *(task->stack_start - 22) = 0x12121212;    // R12
-    *(task->stack_start - 23) = 0x03030303;    // R3
-    *(task->stack_start - 24) = 0x02020202;    // R2
-    *(task->stack_start - 25) = 0x01010101;    // R1
+#if (defined(__VFP_FP__) && !defined(__SOFTFP__))
+    *(task->stack_start - ++iii) = 0x00000000;    // empty gap
+    *(task->stack_start - ++iii) = 0x00000000;    // FPSCR
+    *(task->stack_start - ++iii) = 0x15151515;    // s15
+    *(task->stack_start - ++iii) = 0x14141414;    // s14
+    *(task->stack_start - ++iii) = 0x13131313;    // s13
+    *(task->stack_start - ++iii) = 0x12121212;    // s12
+    *(task->stack_start - ++iii) = 0x11111111;    // s11
+    *(task->stack_start - ++iii) = 0x10101010;    // s10
+    *(task->stack_start - ++iii) = 0x09090909;    // s9
+    *(task->stack_start - ++iii) = 0x08080808;    // s8
+    *(task->stack_start - ++iii) = 0x07070707;    // s7
+    *(task->stack_start - ++iii) = 0x06060606;    // s6
+    *(task->stack_start - ++iii) = 0x05050505;    // s5
+    *(task->stack_start - ++iii) = 0x04040404;    // s4
+    *(task->stack_start - ++iii) = 0x03030303;    // s3
+    *(task->stack_start - ++iii) = 0x02020202;    // s2
+    *(task->stack_start - ++iii) = 0x01010101;    // s1
+    *(task->stack_start - ++iii) = 0x00000000;    // s0
+#endif
+    *(task->stack_start - ++iii) = 0x01000000;    // Thumb bit - xPSR
+    *(task->stack_start - ++iii) = (intptr_t)task->nanokernel_Task_entry;    // PC
+    *(task->stack_start - ++iii) = (intptr_t)__nanokernel_Scheduler_Preemptive_endCurrentTask;    // R14 - LR
+    *(task->stack_start - ++iii) = 0x12121212;    // R12
+    *(task->stack_start - ++iii) = 0x03030303;    // R3
+    *(task->stack_start - ++iii) = 0x02020202;    // R2
+    *(task->stack_start - ++iii) = 0x01010101;    // R1
     // the task paramter go through R0
-    *(task->stack_start - 26) = (intptr_t)task->parameter;    // R0
-    *(task->stack_start - 27) = 0x11111111;    // R11
-    *(task->stack_start - 28) = 0x10101010;    // R10
-    *(task->stack_start - 29) = 0x09090909;    // R9
-    *(task->stack_start - 30) = 0x08080808;    // R8
-    *(task->stack_start - 31) = 0x07070707;    // R7
-    *(task->stack_start - 32) = 0x06060606;    // R6
-    *(task->stack_start - 33) = 0x05050505;    // R5
-    *(task->stack_start - 34) = 0x04040404;    // R4
-    *(task->stack_start - 35) = 0x31313131;    // s31
-    *(task->stack_start - 36) = 0x30303030;    // s30
-    *(task->stack_start - 37) = 0x29292929;    // s29
-    *(task->stack_start - 38) = 0x28282828;    // s28
-    *(task->stack_start - 39) = 0x27272727;    // s27
-    *(task->stack_start - 40) = 0x26262626;    // s26
-    *(task->stack_start - 41) = 0x25252525;    // s25
-    *(task->stack_start - 42) = 0x24242424;    // s24
-    *(task->stack_start - 43) = 0x23232323;    // s23
-    *(task->stack_start - 44) = 0x22222222;    // s22
-    *(task->stack_start - 45) = 0x21212121;    // s21
-    *(task->stack_start - 46) = 0x20202020;    // s20
-    *(task->stack_start - 47) = 0x19191919;    // s19
-    *(task->stack_start - 48) = 0x18181818;    // s18
-    *(task->stack_start - 49) = 0x17171717;    // s17
-    *(task->stack_ptr = task->stack_start - 50) = 0x16161616;    // s16
+    *(task->stack_start - ++iii) = (intptr_t)task->parameter;    // R0
+    *(task->stack_start - ++iii) = 0x11111111;    // R11
+    *(task->stack_start - ++iii) = 0x10101010;    // R10
+    *(task->stack_start - ++iii) = 0x09090909;    // R9
+    *(task->stack_start - ++iii) = 0x08080808;    // R8
+    *(task->stack_start - ++iii) = 0x07070707;    // R7
+    *(task->stack_start - ++iii) = 0x06060606;    // R6
+    *(task->stack_start - ++iii) = 0x05050505;    // R5
+    *(task->stack_ptr = task->stack_start - ++iii) = 0x04040404;    // R4
+#if (defined(__VFP_FP__) && !defined(__SOFTFP__))
+    *(task->stack_start - ++iii) = 0x31313131;    // s31
+    *(task->stack_start - ++iii) = 0x30303030;    // s30
+    *(task->stack_start - ++iii) = 0x29292929;    // s29
+    *(task->stack_start - ++iii) = 0x28282828;    // s28
+    *(task->stack_start - ++iii) = 0x27272727;    // s27
+    *(task->stack_start - ++iii) = 0x26262626;    // s26
+    *(task->stack_start - ++iii) = 0x25252525;    // s25
+    *(task->stack_start - ++iii) = 0x24242424;    // s24
+    *(task->stack_start - ++iii) = 0x23232323;    // s23
+    *(task->stack_start - ++iii) = 0x22222222;    // s22
+    *(task->stack_start - ++iii) = 0x21212121;    // s21
+    *(task->stack_start - ++iii) = 0x20202020;    // s20
+    *(task->stack_start - ++iii) = 0x19191919;    // s19
+    *(task->stack_start - ++iii) = 0x18181818;    // s18
+    *(task->stack_start - ++iii) = 0x17171717;    // s17
+    *(task->stack_ptr = task->stack_start - ++iii) = 0x16161616;    // s16
+#endif
 }
 
 nanokernel_Task_t* nanokernel_Task_create( size_t stack_len,
