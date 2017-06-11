@@ -5,6 +5,7 @@
 #include "inner/__nanokernel_context_switch.h"
 #include "Drivers/src/UART.h"
 #include "Drivers/src/PLL.h"
+#include "Drivers/src/time.h"
 
 void nanokernel_init( byte numberOfTasks )
 {
@@ -22,7 +23,10 @@ void nanokernel_init( byte numberOfTasks )
     __ISR_register( ISR_PEND_SV, __nanokernel_Task_contextSwitch );
 
     // enable PLL `system clock`
-    PLL_setClockSpeed(SYS_CLK_SPEED_IN_MHZ);
+     PLL_setClockSpeed(SYS_CLK_SPEED_IN_MHZ);
+
+    // initiate the time library for `delay` functionality
+    __time_init();
 
 #ifdef PC_COMMUNICATION
     // init System UART
