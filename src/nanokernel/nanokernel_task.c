@@ -62,7 +62,7 @@ void __nanokernel_Task_initStack( nanokernel_Task_t* task )
 #endif
     *(task->stack_start - ++iii) = 0x01000000;    // Thumb bit - xPSR
     *(task->stack_start - ++iii) = (intptr_t)task->nanokernel_Task_entry;    // PC
-    *(task->stack_start - ++iii) = (intptr_t)__nanokernel_Scheduler_Preemptive_endCurrentTask;    // R14 - LR
+    *(task->stack_start - ++iii) = (intptr_t)__nanokernel_Scheduler_endCurrentTask;    // R14 - LR
     *(task->stack_start - ++iii) = 0x12121212;    // R12
     *(task->stack_start - ++iii) = 0x03030303;    // R3
     *(task->stack_start - ++iii) = 0x02020202;    // R2
@@ -134,17 +134,19 @@ nanokernel_Task_t* nanokernel_Task_create( size_t stack_len,
     task->id = id++;
     task->state= __READY;
 
+/**************** This part is modified only by the scheduler ****************/
+    // This will point to the next task according to the scheduler
+    task->taskManagmenet.nextTask = NULL;
     // this will hold the next equal priority task if exists
     // they will act like a closed circle, each task point to the next
-    task->__EqualPriQueue.next   = NULL;
-    // only the head task has the data about the tail
-    task->__EqualPriQueue.tail = NULL;
+    task->taskManagmenet.nextEqualPriTask = NULL;
+/*****************************************************************************/
 
     // init the stack
     __nanokernel_Task_initStack(task);
 
     // add the created task to the scheduler
-    __nanokernel_Scheduler_Preemptive_addTask(task);
+    __nanokernel_Scheduler_addTask(task);
 
     return task;
 }
@@ -279,4 +281,22 @@ void nanokernel_Task_delayedStart(void(*task)(void), uint32_t value)
 
     //TODO: END CRITICAL
     //restore I bit and enable interrupts
+}
+
+__nanokernel_HybridTask_t* __nanokernel_HybridTask_create(Priority_t priority)
+{
+    __nanokernel_HybridTask_t *hTask = malloc( sizeof(__nanokernel_HybridTask_t) );
+
+    hTask->task.id = -1;
+    hTask->task.stack =
+        hTask->task.stack_start =
+            hTask->task.stack_end =
+                hTask->task.stack_ptr = NULL;
+    hTask->task.parameter = NULL;
+    hTask->task.nanokernel_Task_entry = NULL;
+
+    hTask->task.state = __HYBRID;
+    hTask->task.priority = priority;
+
+    return hTask;
 }

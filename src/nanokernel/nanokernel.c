@@ -41,7 +41,7 @@ void nanokernel_init( byte numberOfTasks )
     if(numberOfTasks > 0)
     {
         // initiate the Premptive scheduler
-        __nanokernel_Scheduler_Preemptive_init(numberOfTasks);
+        __nanokernel_Scheduler_init(numberOfTasks);
         // change state from `not initiated` to `not booted`
         __nanokernel_setState(__NOT_BOOTED);
     }
@@ -62,5 +62,5 @@ void nanokernel_bootup()
         __nanokernel_setState(__BOOTED);
 
     // run the scheduler
-    __nanokernel_Scheduler_exec();
+    __nanokernel_Scheduler_update();
 }

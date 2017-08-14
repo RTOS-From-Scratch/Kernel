@@ -3,6 +3,7 @@
 
 #include "nanokernel.h"
 #include "inner/__nanokernel_task.h"
+#include "inner/__nanokernel_hybridtask.h"
 #include "Drivers/src/driver.h"
 #include <stddef.h>
 #include <stdint.h>
@@ -38,5 +39,8 @@ PUBLIC
     // return ID of the current task
     TaskID nanokernel_Task_getCurrentTaskID();
     TaskID nanokernel_Task_getID( nanokernel_Task_t* task );
+
+PRIVATE
+    __nanokernel_HybridTask_t* __nanokernel_HybridTask_create(Priority_t priority);
 
 #endif // NANOKERNEL_TASK_H_
